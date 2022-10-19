@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "level1.tmx",
+    "activeFile": "home.tmx",
     "expandedProjectPaths": [
     ],
     "fileStates": {
@@ -12,8 +12,16 @@
         },
         "UI.tsx": {
             "dynamicWrapping": true,
-            "scaleInDock": 1,
+            "scaleInDock": 0.33,
             "scaleInEditor": 1
+        },
+        "home.tmx": {
+            "scale": 1,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 322.5,
+                "y": 180
+            }
         },
         "level1.tmx": {
             "scale": 1.049453125,
@@ -33,10 +41,11 @@
     "map.lastUsedFormat": "tmx",
     "map.width": 20,
     "openFiles": [
-        "level1.tmx"
+        "home.tmx"
     ],
     "project": "td.tiled-project",
     "recentFiles": [
+        "home.tmx",
         "UI.tsx",
         "level1.tmx"
     ],

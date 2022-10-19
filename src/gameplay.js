@@ -3,6 +3,14 @@ class Gameplay extends Phaser.Scene {
     super("gameplay");
   }
 
+  startLevel(pLevel) {
+    if (pLevel === 1) {
+      this.currentLevel = 1;
+      this.map = this.add.image(0, 0, "level1");
+      this.map.setOrigin(0, 0);
+    }
+  }
+
   clearLevelSelection() {
     this.titleSelection.visible = false;
     this.level1Btn.visible = false;
@@ -27,6 +35,7 @@ class Gameplay extends Phaser.Scene {
       )
     ) {
       this.clearLevelSelection();
+      this.startLevel(1);
     }
   }
 

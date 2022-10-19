@@ -12,6 +12,7 @@ class Home extends Phaser.Scene {
 
     this.load.image("button02", "assets/images/ui/green_button02.png");
     this.load.image("button00", "assets/images/ui/green_button00.png");
+    this.load.image("level1", "assets/images/map/level1.png");
   }
 
   onClick(pointer, gameObject) {
@@ -57,7 +58,7 @@ class Home extends Phaser.Scene {
     this.creditsBtn.setTexture("button02");
   }
   create() {
-    this.scene.start("gameplay");
+    //this.scene.start("gameplay");
     this.add.text(0, 20, "Gamecodeur Gamejam #37", {
       fontSize: 35,
       fixedWidth: config.width,

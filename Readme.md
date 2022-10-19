@@ -9,7 +9,7 @@ A. MVP : 5 Pomodoro
 - [x] Menu principal
 - [x] Selection de niveau
 - [x] Ecran de crédits
-- [] Ecran de gameplay affichage de la map
+- [x] Ecran de gameplay affichage de la map
 
 B. Gestion des tanks
 
