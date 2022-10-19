@@ -58,7 +58,7 @@ class Home extends Phaser.Scene {
     this.creditsBtn.setTexture("button02");
   }
   create() {
-    //this.scene.start("gameplay");
+    this.scene.start("gameplay");
     this.add.text(0, 20, "Gamecodeur Gamejam #37", {
       fontSize: 35,
       fixedWidth: config.width,

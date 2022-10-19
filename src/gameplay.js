@@ -1,13 +1,28 @@
 class Gameplay extends Phaser.Scene {
   constructor() {
     super("gameplay");
+    this.gameStarted = false;
+    this.maxTank = [4, 8, 12];
+    this.paths = [];
+  }
+
+  spawnTank(pX, pY, pType) {
+    var tank = new Tank(this, pX, pY, pType);
+    this.listTanks.push(tank);
+    return tank;
   }
 
   startLevel(pLevel) {
+    this.clearLevelSelection();
+
     if (pLevel === 1) {
       this.currentLevel = 1;
       this.map = this.add.image(0, 0, "level1");
       this.map.setOrigin(0, 0);
+      this.gameStarted = true;
+      this.listTanks = [];
+      for (var i = 0; i < this.maxTank[1]; i++)
+        this.spawnTank(50 * (i + 1), 100, 1);
     }
   }
 
@@ -34,7 +49,6 @@ class Gameplay extends Phaser.Scene {
         this.level1Btn.height
       )
     ) {
-      this.clearLevelSelection();
       this.startLevel(1);
     }
   }
@@ -74,5 +88,17 @@ class Gameplay extends Phaser.Scene {
     );
 
     this.input.on("gameobjectdown", this.onClick, this);
+    this.startLevel(1);
+  }
+
+  update() {
+    for (var i = 0; i < this.listTanks.length; i++) {
+      var tank = this.listTanks[i];
+      tank.update();
+      if (tank.delete) {
+        this.listTanks.splice(i, 1);
+      }
+    }
+    console.log("Tanks " + this.listTanks.length);
   }
 }
