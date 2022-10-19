@@ -16,11 +16,11 @@
             "scaleInEditor": 1
         },
         "home.tmx": {
-            "scale": 1,
-            "selectedLayer": 0,
+            "scale": 0.75,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 319.5,
-                "y": 192
+                "x": 292.66666666666663,
+                "y": 293.33333333333337
             }
         },
         "level1.tmx": {
@@ -35,7 +35,9 @@
             "scaleInDock": 1
         },
         "towerDefense_tilesheet.tsx": {
-            "dynamicWrapping": false
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
         }
     },
     "last.externalTilesetPath": "E:/Projects/Developement/Game/Phaser/GCJam 37/assets/maps",
@@ -44,10 +46,12 @@
     "map.lastUsedFormat": "tmx",
     "map.width": 20,
     "openFiles": [
-        "home.tmx"
+        "home.tmx",
+        "towerDefense_tilesheet.tsx"
     ],
     "project": "td.tiled-project",
     "recentFiles": [
+        "towerDefense_tilesheet.tsx",
         "home.tmx",
         "UI.tsx",
         "level1.tmx"

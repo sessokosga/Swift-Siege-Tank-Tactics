@@ -1,9 +1,18 @@
 class Tank extends Phaser.GameObjects.Sprite {
+  /**
+   *
+   * @param {Phaser.Scene} scene
+   * @param {Number} pX
+   * @param {Number} pY
+   * @param {String} pType
+   */
   constructor(scene, pX, pY, pType) {
     super(scene, pX, pY, "tank");
     this.type = pType;
     this.vx = 0;
     this.vy = 0;
+    this.nextPoint = 1;
+    this.reachedObjective = false;
 
     scene.add.existing(this);
     switch (pType) {
@@ -29,14 +38,20 @@ class Tank extends Phaser.GameObjects.Sprite {
     this.turret.vy = 0;
   }
 
+  delete() {
+    this.turret.destroy();
+    this.destroy();
+    this.isDestroyed = true;
+  }
+
   update() {
     this.x += this.vx;
-    this.turret.x += this.vx;
+    this.turret.x = this.x;
     this.y += this.vy;
-    this.turret.y += this.vy;
+    this.turret.y = this.y;
 
     if (this.x > config.width + 32 || this.y > config.height + 32) {
-      this.delete = true;
+      this.delete();
     }
   }
 }

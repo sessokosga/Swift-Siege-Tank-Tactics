@@ -3,20 +3,34 @@ class Gameplay extends Phaser.Scene {
     super("gameplay");
     this.gameStarted = false;
     this.maxTank = [4, 8, 12];
+    this.nearBy = 4;
     this.pathsX = [];
     this.pathsX[1] = [1, 1, 8, 8, 16, 16, 19];
 
     this.pathsY = [];
     this.pathsY[1] = [0, 5, 5, 2, 2, 8, 8];
 
-    console.log(this.pathsX[1][0]);
-    console.log(this.pathsY[1][0]);
+    this.tankObjectiveX = [19];
+    this.tankObjectiveY = [8];
+    this.tankSpawnDelay = 3000;
   }
 
   spawnTank(pX, pY, pType) {
     var tank = new Tank(this, pX, pY, pType);
     this.listTanks.push(tank);
     return tank;
+  }
+
+  startNextWave() {
+    if (this.listTanks.length < this.maxTank[this.currentLevel - 1]) {
+      this.spawnTank(
+        this.pathsX[1][0] * config.tileSize + config.tileSize / 2,
+        this.pathsY[1][0] * config.tileSize + config.tileSize / 2,
+        1
+      );
+    } else {
+      clearInterval(this.spawnTimerID);
+    }
   }
 
   startLevel(pLevel) {
@@ -28,19 +42,10 @@ class Gameplay extends Phaser.Scene {
       this.map.setOrigin(0, 0);
       this.gameStarted = true;
       this.listTanks = [];
-      /*for (var i = 0; i < this.maxTank[1]; i++) {
-        var tankType = 1;
-        if (Math.random() > 0.5) {
-          tankType = 1;
-        } else {
-          tankType = 2;
-        }
-        this.spawnTank(50 * (i + 1), 100, tankType);
-      }*/
-      this.spawnTank(
-        this.pathsX[1][0] * 32 + 16,
-        this.pathsY[1][0] * 32 + 16,
-        1
+
+      this.spawnTimerID = setInterval(
+        () => this.startNextWave(),
+        this.tankSpawnDelay
       );
     }
   }
@@ -81,8 +86,8 @@ class Gameplay extends Phaser.Scene {
 
     this.level1Btn = addButton(
       this,
-      7 * 32,
-      3 * 32,
+      7 * config.tileSize,
+      3 * config.tileSize,
       "Niveau 1",
       25,
       "button02"
@@ -90,8 +95,8 @@ class Gameplay extends Phaser.Scene {
 
     this.level2Btn = addButton(
       this,
-      7 * 32,
-      5 * 32 + 10,
+      7 * config.tileSize,
+      5 * config.tileSize + 10,
       "Niveau 2",
       25,
       "button02"
@@ -99,8 +104,8 @@ class Gameplay extends Phaser.Scene {
 
     this.level3Btn = addButton(
       this,
-      7 * 32,
-      7 * 32 + 20,
+      7 * config.tileSize,
+      7 * config.tileSize + 20,
       "Niveau 3",
       25,
       "button02"
@@ -110,14 +115,73 @@ class Gameplay extends Phaser.Scene {
     this.startLevel(1);
   }
 
-  update() {
+  updateTanks() {
     for (var i = 0; i < this.listTanks.length; i++) {
+      /** @type  Tank */
       var tank = this.listTanks[i];
-      tank.update();
-      if (tank.delete) {
-        this.listTanks.splice(i, 1);
+      // Got the next waypoint
+      var nextX =
+        this.pathsX[this.currentLevel][tank.nextPoint] * config.tileSize +
+        config.tileSize / 2;
+      var nextY =
+        this.pathsY[this.currentLevel][tank.nextPoint] * config.tileSize +
+        config.tileSize / 2;
+      var dist = processDistance(tank.x, tank.y, nextX, nextY);
+      var angle = processAngle(tank.x, tank.y, nextX, nextY);
+
+      // Check if the next waypoint is far enought for the tank to move to it
+      if (dist > this.nearBy) {
+        // Set the tank rotation angle if its the very first waypoint
+        var targetDeg = angle * (180 / Math.PI);
+        if (tank.nextPoint === 1) tank.angle = targetDeg;
+        else {
+          if (tank.angle < targetDeg) tank.angle += 3;
+          else if (tank.angle > targetDeg) tank.angle -= 3;
+          if (Math.abs(tank.angle - targetDeg) < 5) tank.angle = targetDeg;
+        }
+
+        // Set the tank velocity in order to reach the waypoint
+        // if (Math.abs(tank.angle - targetDeg) < 20) {
+        tank.vx = 1 * Math.cos(angle);
+        tank.vy = 1 * Math.sin(angle);
+        // }
+      } else {
+        // Stop the tank when it reached a waypoint
+        tank.vx = 0;
+        tank.vy = 0;
+
+        if (isNaN(nextX) === false && isNaN(nextX) === false) {
+          tank.x = nextX;
+          tank.y = nextY;
+        }
+
+        // Update the next waypoint
+        if (tank.nextPoint < this.pathsX[this.currentLevel].length)
+          tank.nextPoint++;
+
+        // Check if the tank reached the objective
+        if (
+          getCell(tank.x) === this.tankObjectiveX[this.currentLevel - 1] &&
+          getCell(tank.y) === this.tankObjectiveY[this.currentLevel - 1]
+        ) {
+          console.log("Objective reached");
+          tank.reachedObjective = true;
+          tank.delete();
+        }
+
+        if (tank.isDestroyed) {
+          this.listTanks.splice(i, 1);
+        }
       }
+
+      tank.update();
     }
-    console.log("Tanks " + this.listTanks.length);
+    //console.log("Tanks " + this.listTanks.length);
+  }
+
+  update() {
+    this.updateTanks();
+
+    console.log(this.listTanks.length);
   }
 }
