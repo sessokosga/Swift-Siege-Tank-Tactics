@@ -17,5 +17,3 @@ B. Gestion des tanks : 1 Pomodoro
 - [] Chemin à parcourir
 - [] Vagues des tanks
 - [] Objectif des tanks
-
--

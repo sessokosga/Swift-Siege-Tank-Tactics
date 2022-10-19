@@ -3,7 +3,14 @@ class Gameplay extends Phaser.Scene {
     super("gameplay");
     this.gameStarted = false;
     this.maxTank = [4, 8, 12];
-    this.paths = [];
+    this.pathsX = [];
+    this.pathsX[1] = [1, 1, 8, 8, 16, 16, 19];
+
+    this.pathsY = [];
+    this.pathsY[1] = [0, 5, 5, 2, 2, 8, 8];
+
+    console.log(this.pathsX[1][0]);
+    console.log(this.pathsY[1][0]);
   }
 
   spawnTank(pX, pY, pType) {
@@ -21,8 +28,20 @@ class Gameplay extends Phaser.Scene {
       this.map.setOrigin(0, 0);
       this.gameStarted = true;
       this.listTanks = [];
-      for (var i = 0; i < this.maxTank[1]; i++)
-        this.spawnTank(50 * (i + 1), 100, 1);
+      /*for (var i = 0; i < this.maxTank[1]; i++) {
+        var tankType = 1;
+        if (Math.random() > 0.5) {
+          tankType = 1;
+        } else {
+          tankType = 2;
+        }
+        this.spawnTank(50 * (i + 1), 100, tankType);
+      }*/
+      this.spawnTank(
+        this.pathsX[1][0] * 32 + 16,
+        this.pathsY[1][0] * 32 + 16,
+        1
+      );
     }
   }
 
