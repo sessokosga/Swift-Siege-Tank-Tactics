@@ -1,0 +1,47 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "level1.tmx",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        "": {
+            "scaleInEditor": 1
+        },
+        "UI.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "level1.tmx": {
+            "scale": 1.049453125,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 319.6903148961512,
+                "y": 191.52832576490727
+            }
+        },
+        "level1.tmx#towerDefense_tilesheet": {
+            "scaleInDock": 1
+        }
+    },
+    "last.externalTilesetPath": "E:/Projects/Developement/Game/Phaser/GCJam 37/assets/maps",
+    "last.imagePath": "E:/Projects/Developement/Game/Phaser/GCJam 37/assets/images/ui",
+    "map.height": 12,
+    "map.lastUsedFormat": "tmx",
+    "map.width": 20,
+    "openFiles": [
+        "level1.tmx"
+    ],
+    "project": "td.tiled-project",
+    "recentFiles": [
+        "UI.tsx",
+        "level1.tmx"
+    ],
+    "tileset.embedInMap": true,
+    "tileset.lastUsedFilter": "Tiled tileset files (*.tsx *.xml)",
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.type": 1
+}
