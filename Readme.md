@@ -4,10 +4,10 @@
 
 ### Liste des tâches
 
-A. MVP : 3 Pomodoro
+A. MVP : 5 Pomodoro
 
 - [x] Menu principal
-- [] Selection de niveau
+- [x] Selection de niveau
 - [x] Ecran de crédits
 - [] Ecran de gameplay affichage de la map
 
