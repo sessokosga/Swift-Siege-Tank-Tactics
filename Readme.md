@@ -11,9 +11,9 @@ A. MVP : 5 Pomodoro
 - [x] Ecran de crédits
 - [x] Ecran de gameplay affichage de la map
 
-B. Gestion des tanks : 8 Pomodoro
+B. Gestion des tanks : 10 Pomodoro
 
 - [x] Spawn des tanks
 - [x] Chemin à parcourir
-- [] Vagues des tanks
+- [x] Vagues des tanks
 - [x] Objectif des tanks
