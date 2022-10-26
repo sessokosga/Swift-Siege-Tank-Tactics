@@ -1,37 +1,52 @@
 class Bullet extends Phaser.GameObjects.Sprite {
-    /**
-     *
-     * @param {Phaser.Scene} scene
-     * @param {Number} pX
-     * @param {Number} pY
-     * @param {String} pType
-     */
-    constructor(scene, pX, pY, pType) {
-      super(scene, pX, pY, "tank");
-      this.type = pType;
-  
-      scene.add.existing(this);
-      switch (pType) {
-        case 0:
-          this.setTexture("tilesheet", 249);
-          break;
-        case 1:
-          this.setTexture("tilesheet", 250);
-          break;
-        case 2:
-          this.setTexture("tilesheet", 204);
-          break;
-        case 3:
-          this.setTexture("tilesheet", 205);
-          break;
-      }
+  /**
+   *
+   * @param {Phaser.scene} scene
+   * @param {Number} pX
+   * @param {Number} pY
+   * @param {Number} pVx
+   * @param {Number} pVy
+   * @param {Number} pAngle
+   * @param {String} pType
+   * @param {String} pTarget
+   */
+  constructor(scene, pX, pY, pVx, pVy, pAngle, pType, pTarget) {
+    super(scene, pX, pY, "bullet");
+    this.type = pType;
+    this.vx = pVx;
+    this.vy = pVy;
+    this.angle = pAngle;
+    this.target = pTarget;
+    scene.add.existing(this);
+    switch (pType) {
+      // Tank bullets
+      case 0:
+        this.setTexture("tilesheet", 297);
+        break;
+      case 1:
+        this.setTexture("tilesheet", 298);
+        break;
+      // Tower bullets
+      case 2:
+        this.setTexture("tilesheet", 251);
+        break;
+      case 3:
+        this.setTexture("tilesheet", 295);
+        break;
     }
-  
-    delete() {
-      this.destroy();
-      this.isDestroyed = true;
-    }
-  
-    update() {}
   }
-  
+
+  delete() {
+    this.destroy();
+    this.isDestroyed = true;
+  }
+
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+
+    if (this.x > config.width + 32 || this.y > config.height + 32) {
+      this.delete();
+    }
+  }
+}
