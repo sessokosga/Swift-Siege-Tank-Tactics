@@ -1,6 +1,6 @@
 var config = {
   width: 640,
-  height: 384,
+  height: 448,
   tileSize: 32,
   pixelArt: true,
   scene: [Home, Gameplay, Credits],
