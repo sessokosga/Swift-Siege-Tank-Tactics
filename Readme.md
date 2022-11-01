@@ -30,5 +30,5 @@ D. Gestion des tirs : 7 Pomodoro
 - [x] Tours sur tanks
 - [x] Rotation des tourelles des tanks
 - [x] Rotation des des tours
-- [] Animation des tirs et exlosion
+- [x] Animation des tirs et exlosion
 - [] Tirs spécial (Reaction en chaine)

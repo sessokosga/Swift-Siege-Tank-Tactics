@@ -9,6 +9,22 @@ class Home extends Phaser.Scene {
       "assets/images/spritesheet/towerDefense_tilesheet.png",
       { frameWidth: 32, frameHeight: 32 }
     );
+    this.load.spritesheet(
+      "explosion1",
+      "assets/images/animations/explosion1.png",
+      { frameWidth: 32, frameHeight: 32 }
+    );
+    this.load.spritesheet(
+      "explosion2",
+      "assets/images/animations/explosion2.png",
+      { frameWidth: 32, frameHeight: 32 }
+    );
+
+    this.load.spritesheet(
+      "explosion3",
+      "assets/images/animations/explosion3.png",
+      { frameWidth: 64, frameHeight: 64 }
+    );
 
     this.load.image("button02", "assets/images/ui/green_button02.png");
     this.load.image("button00", "assets/images/ui/green_button00.png");
@@ -80,6 +96,31 @@ class Home extends Phaser.Scene {
     this.input.on("gameobjectdown", this.onClick, this);
     this.input.on("pointerover", this.onPointerOver, this);
     this.input.on("pointerout", this.onPointerOut, this);
+
+    // Animations
+    this.anims.create({
+      key: "explosion1",
+      frames: this.anims.generateFrameNumbers("explosion1"),
+      frameRate: 20,
+      repeat: 0,
+      hideOnComplete: true,
+    });
+
+    this.anims.create({
+      key: "explosion2",
+      frames: this.anims.generateFrameNumbers("explosion2"),
+      frameRate: 20,
+      repeat: 0,
+      hideOnComplete: true,
+    });
+
+    this.anims.create({
+      key: "explosion3",
+      frames: this.anims.generateFrameNumbers("explosion3"),
+      frameRate: 60,
+      repeat: 0,
+      hideOnComplete: true,
+    });
   }
 
   update() {}

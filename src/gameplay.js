@@ -208,7 +208,7 @@ class Gameplay extends Phaser.Scene {
         this.pathsY[this.currentLevel - 1][this.currentWave][0] *
           config.tileSize +
           config.tileSize / 2,
-        0
+        1
       );
       // if (this.listTanks.length <= 1)
       // console.log("Wave ", this.currentWave, " started");
