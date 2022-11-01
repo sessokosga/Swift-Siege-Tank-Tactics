@@ -18,6 +18,7 @@ class Bullet extends Phaser.GameObjects.Sprite {
     this.angle = pAngle;
     this.target = pTarget;
     scene.add.existing(this);
+
     switch (pType) {
       // Tank bullets
       case 0:
@@ -28,9 +29,15 @@ class Bullet extends Phaser.GameObjects.Sprite {
         break;
       // Tower bullets
       case 2:
-        this.setTexture("tilesheet", 251);
+        this.setTexture("tilesheet", 295);
         break;
       case 3:
+        this.setTexture("tilesheet", 296);
+        break;
+      case 4:
+        this.setTexture("tilesheet", 251);
+        break;
+      case 5:
         this.setTexture("tilesheet", 295);
         break;
     }
