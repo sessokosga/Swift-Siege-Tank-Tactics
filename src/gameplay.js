@@ -18,7 +18,7 @@ class Gameplay extends Phaser.Scene {
     this.pathsX[0] = [];
     this.pathsX[0][1] = [1, 1, 8, 8, 16, 16, 19];
     this.pathsX[0][2] = [1, 3, 3, 7, 8, 15, 16, 17, 19];
-    this.tankShootDelay = [1000, 1500, 2000];
+    this.tankShootDelay = [800, 650, 500];
     this.tankSpeed = [0.5, 2, 3];
 
     this.pathsY = [];
@@ -32,6 +32,7 @@ class Gameplay extends Phaser.Scene {
 
     /**  Tower configs */
     this.listTowers = [];
+    this.towerShootDelay = [800, 650, 500];
 
     // Defensive positions
     this.defPositionsX = [];
@@ -58,7 +59,6 @@ class Gameplay extends Phaser.Scene {
     for (var b = this.listBullets.length - 1; b >= 0; b--) {
       /**@type Bullet */
       var bullet = this.listBullets[b];
-
       if (bullet.target === "tower") {
         for (var t = 0; t < this.listTowers.length; t++) {
           /**@type Tower */
@@ -75,7 +75,7 @@ class Gameplay extends Phaser.Scene {
               bullet.height / 2
             )
           ) {
-            bullet.destroy();
+            bullet.delete();
             tower.hurt(1);
           }
         }
@@ -95,7 +95,7 @@ class Gameplay extends Phaser.Scene {
               bullet.height / 2
             )
           ) {
-            bullet.destroy();
+            bullet.delete();
             tank.hurt(1);
           }
         }
@@ -141,19 +141,38 @@ class Gameplay extends Phaser.Scene {
     this.listDefPositions.push(pos);
   }
 
-  updateTowers() {
+  updateTowers(dt) {
     // Look for tanks to shoot at
     for (var t = this.listTowers.length - 1; t >= 0; t--) {
       var tower = this.listTowers[t];
+      tower.timer -= dt;
+
+      var dist = config.width * 5;
+      var targetX = -1;
+      var targetY = -1;
+
+      // Look for the nearest tank to shoot at
       for (var i = 0; i < this.listTanks.length; i++) {
         var tank = this.listTanks[i];
-        if (processDistance(tower.x, tower.y, tank.x, tank.y) < tower.range) {
-          var angle = processAngle(tower.x, tower.y, tank.x, tank.y);
+        var curDist = processDistance(tank.x, tank.y, tower.x, tower.y);
+        if (curDist <= tower.range) {
+          if (dist > curDist) {
+            dist = curDist;
+            targetX = tank.x;
+            targetY = tank.y;
+          }
+        }
+      }
+
+      // Shoot at the nearest tank found
+      if (targetX > 0 && targetY > 0) {
+        if (tower.timer <= 0) {
+          var angle = processAngle(tower.x, tower.y, targetX, targetY);
           var vx = 10 * Math.cos(angle);
           var vy = 10 * Math.sin(angle);
           var ang = angle * (180 / Math.PI);
           tower.angle = ang + 90;
-
+          tower.timer = this.towerShootDelay[tower.type];
           switch (tower.type) {
             case 0:
               this.shoot(
@@ -178,11 +197,9 @@ class Gameplay extends Phaser.Scene {
               );
               break;
           }
-
-          break;
-        } else {
-          tower.angle = 0;
         }
+      } else {
+        tower.angle = 0;
       }
 
       if (tower.isDestroyed) {
@@ -218,13 +235,14 @@ class Gameplay extends Phaser.Scene {
     }
   }
 
-  updateTanks() {
+  updateTanks(dt) {
     for (var i = this.listTanks.length - 1; i >= 0; i--) {
       /** @type  Tank */
       var tank = this.listTanks[i];
       var dist = config.width * 5;
       var targetX = -1;
       var targetY = -1;
+      tank.timer -= dt;
 
       // Look for the nearest tower to shoot at
       for (var t = 0; t < this.listTowers.length; t++) {
@@ -238,22 +256,26 @@ class Gameplay extends Phaser.Scene {
           }
         }
       }
+
       // Shoot at the nearest tower found
       if (targetX > 0 && targetY > 0) {
-        var angle = processAngle(tank.x, tank.y, targetX, targetY);
-        var vx = 10 * Math.cos(angle);
-        var vy = 10 * Math.sin(angle);
-        var ang = angle * (180 / Math.PI);
-        tank.turret.angle = ang;
-        this.shoot(
-          tank.turret.x + 20 * Math.cos(angle),
-          tank.turret.y + 20 * Math.sin(angle),
-          vx,
-          vy,
-          ang + 90,
-          0,
-          "tower"
-        );
+        if (tank.timer <= 0) {
+          var angle = processAngle(tank.x, tank.y, targetX, targetY);
+          var vx = 10 * Math.cos(angle);
+          var vy = 10 * Math.sin(angle);
+          var ang = angle * (180 / Math.PI);
+          tank.turret.angle = ang;
+          tank.timer = this.tankShootDelay[tank.type];
+          this.shoot(
+            tank.turret.x + 20 * Math.cos(angle),
+            tank.turret.y + 20 * Math.sin(angle),
+            vx,
+            vy,
+            ang + 90,
+            0,
+            "tower"
+          );
+        }
       } else {
         tank.turret.angle = tank.angle;
       }
@@ -286,8 +308,6 @@ class Gameplay extends Phaser.Scene {
         tank.vy = this.tankSpeed[this.currentLevel - 1] * Math.sin(angle);
       } else {
         // Stop the tank when it reached a waypoint
-        tank.vx = 0;
-        tank.vy = 0;
 
         if (isNaN(nextX) === false && isNaN(nextX) === false) {
           tank.x = nextX;
@@ -308,8 +328,6 @@ class Gameplay extends Phaser.Scene {
         ) {
           //console.log("Objective reached");
           tank.reachedObjective = true;
-          tank.delete();
-          this.tankDestroyed++;
           // console.log(
           //   "Destroyed ",
           //   this.tankDestroyed,
@@ -341,6 +359,7 @@ class Gameplay extends Phaser.Scene {
       // Remove destroyed tanks from the tank list
       if (tank.isDestroyed) {
         this.listTanks.splice(i, 1);
+        this.tankDestroyed++;
       }
     }
   }
@@ -514,10 +533,11 @@ class Gameplay extends Phaser.Scene {
     this.startLevel(1);
   }
 
-  update() {
+  update(time) {
+    var dt = getDeltaTime(time);
     if (this.gameStarted) {
-      this.updateTanks();
-      this.updateTowers();
+      this.updateTanks(dt);
+      this.updateTowers(dt);
       this.updateBullets();
     }
   }

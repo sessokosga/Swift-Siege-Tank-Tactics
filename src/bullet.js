@@ -18,7 +18,7 @@ class Bullet extends Phaser.GameObjects.Sprite {
     this.angle = pAngle;
     this.target = pTarget;
     scene.add.existing(this);
-
+    this.isDestroyed = false;
     switch (pType) {
       // Tank bullets
       case 0:

@@ -19,13 +19,13 @@ class Tank extends Phaser.GameObjects.Sprite {
       case 0:
         this.setTexture("tilesheet", 268);
         this.turret = scene.add.sprite(pX, pY, "tilesheet", 291);
-        this.range = 170;
+        this.range = 100;
         this.life = 5;
         break;
       case 1:
         this.setTexture("tilesheet", 269);
         this.turret = scene.add.sprite(pX, pY, "tilesheet", 292);
-        this.range = 100;
+        this.range = 170;
         this.life = 5;
         break;
       case 2:
@@ -62,13 +62,10 @@ class Tank extends Phaser.GameObjects.Sprite {
     this.text.destroy();
     this.circle.destroy();
     this.isDestroyed = true;
-
-    // this.destroy();
   }
 
   hurt(pX) {
-    this.life -= pX;
-    console.log(this.text.text);
+    // this.life -= pX;
     if (this.life >= 0) {
       this.text.text = this.life;
     }
@@ -88,8 +85,15 @@ class Tank extends Phaser.GameObjects.Sprite {
     this.turret.y = this.y;
     this.circle.y = this.y;
 
-    if (this.x > config.width + 32 || this.y > config.height + 32) {
-      this.delete();
+    // if (this.timer >= 0) this.text.text = this.timer;
+
+    if (
+      this.x >
+      config.width + config.tileSize /* ||
+      this.y > config.height + +config.tileSize */
+    ) {
+      // this.delete();
+      console.log("del");
     }
   }
 }

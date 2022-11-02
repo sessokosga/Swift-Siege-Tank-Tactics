@@ -9,13 +9,14 @@ class Tower extends Phaser.GameObjects.Sprite {
   constructor(scene, pX, pY, pType) {
     super(scene, pX, pY, "tower");
     this.type = pType;
-
+    this.isDestroyed = false;
+    this.timer = 0;
     scene.add.existing(this);
     switch (pType) {
       case 0:
         this.setTexture("tilesheet", 249);
         this.life = 10;
-        this.range = 80;
+        this.range = 180;
         break;
       case 1:
         this.setTexture("tilesheet", 250);
@@ -50,12 +51,13 @@ class Tower extends Phaser.GameObjects.Sprite {
     this.text.destroy();
     this.circle.destroy();
     this.isDestroyed = true;
-    // this.destroy();
   }
 
   hurt(pX) {
-    this.life -= pX;
-
+    // this.life -= pX;
+    if (this.life >= 0) {
+      this.text.text = this.life;
+    }
     if (this.life <= 0) {
       this.delete();
     }

@@ -7,6 +7,8 @@ var config = {
   backgroundColor: "#000",
 };
 
+var startTime = 0;
+
 var game = new Phaser.Game(config);
 
 function addButton(pScene, pX, pY, pText, pTextSize, pTexture) {
@@ -36,4 +38,15 @@ function processDistance(x1, y1, x2, y2) {
 
 function getCell(pX) {
   return Math.floor((pX - config.tileSize / 2) / config.tileSize);
+}
+
+function getTime() {
+  var d = new Date();
+  return d.getTime();
+}
+
+function getDeltaTime(time) {
+  var delta = time - startTime;
+  startTime = time;
+  return delta;
 }
