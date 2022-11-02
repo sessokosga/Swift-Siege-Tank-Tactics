@@ -24,11 +24,11 @@ C. Gestion des tours : 5 Pomodoro
 - [x] Etablissement des potentielles positions défensives
 - [x] Support du drag and drop
 
-D. Gestion des tirs : 10 Pomodoro
+D. Gestion des tirs : 12 Pomodoro
 
 - [x] Tanks sur tours
 - [x] Tours sur tanks
 - [x] Rotation des tourelles des tanks
 - [x] Rotation des des tours
 - [x] Animation des tirs et exlosion
-- [] Tirs spécial (Reaction en chaine)
+- [x] Tirs spécial (Reaction en chaine)

@@ -34,11 +34,9 @@ class Bullet extends Phaser.GameObjects.Sprite {
       case 3:
         this.setTexture("tilesheet", 296);
         break;
+      // Special bullet
       case 4:
-        this.setTexture("tilesheet", 251);
-        break;
-      case 5:
-        this.setTexture("tilesheet", 295);
+        this.setTexture("tilesheet", 252);
         break;
     }
   }

@@ -12,6 +12,8 @@ class Tank extends Phaser.GameObjects.Sprite {
     this.vx = 0;
     this.vy = 0;
     this.timer = 0;
+    this.timerToDie = 0;
+    this.timerToDieIsEnabled = false;
     this.nextPoint = 1;
     this.reachedObjective = false;
     scene.add.existing(this);
@@ -42,7 +44,7 @@ class Tank extends Phaser.GameObjects.Sprite {
         break;
     }
     this.text = scene.add.text(pX, pY + 32, this.life);
-    this.circle = scene.add.circle(this.x, this.y, this.range, 0xffffff, 0.2);
+    // this.circle = scene.add.circle(this.x, this.y, this.range, 0xffffff, 0.2);
 
     this.turret.vx = 0;
     this.turret.vy = 0;
@@ -60,12 +62,12 @@ class Tank extends Phaser.GameObjects.Sprite {
 
     this.turret.destroy();
     this.text.destroy();
-    this.circle.destroy();
+    // this.circle.destroy();
     this.isDestroyed = true;
   }
 
   hurt(pX) {
-    // this.life -= pX;
+    this.life -= pX;
     if (this.life >= 0) {
       this.text.text = this.life;
     }
@@ -80,20 +82,18 @@ class Tank extends Phaser.GameObjects.Sprite {
     this.text.x = this.x;
     this.text.y = this.y;
 
-    this.circle.x = this.x;
+    // this.circle.x = this.x;
     this.y += this.vy;
     this.turret.y = this.y;
-    this.circle.y = this.y;
+    // this.circle.y = this.y;
 
     // if (this.timer >= 0) this.text.text = this.timer;
 
     if (
-      this.x >
-      config.width + config.tileSize /* ||
-      this.y > config.height + +config.tileSize */
+      this.x > config.width + config.tileSize ||
+      this.y > config.height + +config.tileSize
     ) {
-      // this.delete();
-      console.log("del");
+      this.delete();
     }
   }
 }
