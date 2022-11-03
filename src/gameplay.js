@@ -4,6 +4,12 @@ class Gameplay extends Phaser.Scene {
     this.gameStarted = false;
     this.nearBy = 4;
 
+    // Score
+    this.resource = 2000;
+    this.resourceTo = 2000;
+    this.resourceMap = [200, 250]; // 20 pts for level 1 tanks, 25 for level 2
+    this.comboRatio = 1.2; // 1.2 * nomber of tanks destroyed in a raw * 20 or 25
+
     /** Bullet configs */
     this.listBullets = [];
 
@@ -46,6 +52,111 @@ class Gameplay extends Phaser.Scene {
     this.listAvailableTowerTypes = [];
     this.totalTowerType = 3;
     this.towerSprites = [249, 250, 252];
+    this.costByTowerType = [400, 600, 2000];
+
+    // Animation list
+    this.lisAnimationScale = [];
+    this.listAnimationTravel = [];
+    this.lisAnimationAlpha = [];
+  }
+
+  /** Animation functions */
+  animateScale(obj, scaleFrom, scaleTo, speed) {
+    if (scaleFrom !== scaleTo) {
+      console.log(scaleFrom, scaleTo);
+      obj.isScaling = true;
+      obj.scale = scaleFrom;
+      obj.scaleTo = scaleTo;
+      obj.scaleSpeed = speed;
+      this.lisAnimationScale.push(obj);
+    }
+  }
+
+  updateScaleAnimations() {
+    for (var i = this.lisAnimationScale.length - 1; i >= 0; i--) {
+      /**@type Tower */
+      var obj = this.lisAnimationScale[i];
+      if (obj.isScaling) {
+        if (obj.turn === undefined) {
+          obj.scale += obj.scaleSpeed * (obj.scaleTo * 1.2 - obj.scale);
+          if (Math.abs(obj.scale - obj.scaleTo * 1.2) <= 0.05) {
+            obj.turn = 2;
+          }
+        } else {
+          obj.scale += obj.scaleSpeed * (obj.scaleTo - obj.scale);
+          if (Math.abs(obj.scale - obj.scaleTo) <= 0.05) {
+            obj.isScaling = false;
+            obj.scale = obj.scaleTo;
+          }
+        }
+      } else {
+        this.lisAnimationScale.splice(i, 1);
+      }
+    }
+  }
+
+  animateAlpha(obj, alphaFrom, alphaTo, speed) {
+    if (alphaFrom !== alphaTo) {
+      obj.isAlphaMoving = true;
+      obj.alpha = alphaFrom;
+      obj.alphaTo = alphaTo;
+      obj.alphaSpeed = speed;
+      this.lisAnimationAlpha.push(obj);
+    }
+  }
+
+  updateAphaAnimations() {
+    for (var i = this.lisAnimationAlpha.length - 1; i >= 0; i--) {
+      /**@type Tower */
+      var obj = this.lisAnimationAlpha[i];
+
+      if (obj.isAlphaMoving) {
+        obj.alpha += obj.alphaSpeed * (obj.alphaTo - obj.alpha);
+        if (Math.abs(obj.alpha - obj.alphaTo) <= 0.0001) {
+          obj.alpha = obj.alphaTo;
+          obj.isAlphaMoving = false;
+        }
+      } else {
+        this.lisAnimationAlpha.splice(i, 1);
+      }
+    }
+  }
+
+  animateTravel(obj, fromX, fromY, toX, toY, speed) {
+    if (fromX !== toX || fromY !== toY) {
+      obj.isTravelingX = true;
+      obj.isTravelingY = true;
+      obj.x = fromX;
+      obj.y = fromY;
+      obj.travelToX = toX;
+      obj.travelToY = toY;
+      obj.travelSpeed = speed;
+      this.listAnimationTravel.push(obj);
+    }
+  }
+
+  updateTravelAnimations() {
+    for (var i = this.listAnimationTravel.length - 1; i >= 0; i--) {
+      /**@type Tower */
+      var obj = this.listAnimationTravel[i];
+      if (obj.isTravelingX) {
+        obj.x += obj.travelSpeed * (obj.travelToX - obj.x);
+        if (Math.abs(obj.travelToX - obj.x) <= this.nearBy) {
+          obj.x = obj.travelToX;
+          obj.isTravelingX = false;
+        }
+      }
+      if (obj.isTravelingY) {
+        obj.y += obj.travelSpeed * (obj.travelToY - obj.y);
+        if (Math.abs(obj.travelToY - obj.y) <= this.nearBy) {
+          obj.y = obj.travelToY;
+          obj.isTravelingY = false;
+        }
+      }
+      if (obj.isTravelingX === false && obj.isTravelingY === false) {
+        this.listAnimationTravel.splice(i, 1);
+      }
+    }
   }
 
   /** Bullet functions */
@@ -141,7 +252,7 @@ class Gameplay extends Phaser.Scene {
   }
   showAvailableTowerTypes() {
     var x = 200;
-    var y = 400;
+    var y = 395;
     for (var i = 0; i < this.totalTowerType; i++) {
       var tow = this.add.sprite(
         x + 64 * i,
@@ -149,9 +260,22 @@ class Gameplay extends Phaser.Scene {
         "tilesheet",
         this.towerSprites[i]
       );
-      tow.base = this.add.sprite(tow.x, tow.y, "tilesheet", 181);
       tow.depth = 2;
+
+      tow.base = this.add.sprite(tow.x, tow.y, "tilesheet", 181);
       tow.base.setScale(1.3, 1.3);
+
+      tow.cost = this.add.text(
+        tow.x - config.tileSize / 2,
+        tow.y + 15,
+        this.costByTowerType[i],
+        {
+          fontSize: 14,
+          align: "center",
+        }
+      );
+      tow.cost.depth = 3;
+
       tow.clicked = false;
       tow.type = i;
       tow.initX = tow.x;
@@ -226,8 +350,9 @@ class Gameplay extends Phaser.Scene {
       }
 
       if (tower.isDestroyed) {
-        this.listDefPositions[tower.posID].occupied = false;
-        this.listDefPositions[tower.posID].alpha = 1;
+        var pos = this.listDefPositions[tower.posID];
+        pos.occupied = false;
+        this.animateAlpha(pos, pos.alpha, 1, 0.04);
         this.listTowers.splice(t, 1);
       }
     }
@@ -236,6 +361,8 @@ class Gameplay extends Phaser.Scene {
   /** Tank functions */
   spawnTank(pX, pY, pType) {
     var tank = new Tank(this, pX, pY, pType);
+    this.animateScale(tank, 0.1, 1.1, 0.1);
+    this.animateScale(tank.turret, 0.1, 1.1, 0.1);
     this.listTanks.push(tank);
     this.tankspawned++;
   }
@@ -464,7 +591,8 @@ class Gameplay extends Phaser.Scene {
           tow.y - config.tileSize / 2,
           tow.width,
           tow.height
-        )
+        ) &&
+        this.resourceTo >= this.costByTowerType[tow.type]
       ) {
         tow.clicked = true;
       }
@@ -478,7 +606,9 @@ class Gameplay extends Phaser.Scene {
       if (tow.clicked) {
         tow.x = pointer.x;
         tow.y = pointer.y;
-        tow.base.alpha = 0;
+
+        this.animateAlpha(tow.base, tow.base.alpha, 0, 0.01);
+        this.animateAlpha(tow.cost, tow.cost.alpha, 0, 0.01);
       }
     }
   }
@@ -491,7 +621,9 @@ class Gameplay extends Phaser.Scene {
       // console.log(tow.def);
       for (var j = 0; j < this.listDefPositions.length; j++) {
         var pos = this.listDefPositions[j];
-        tow.base.alpha = 1;
+        this.animateAlpha(tow.base, tow.base.alpha, 1, 0.01);
+        this.animateAlpha(tow.cost, tow.cost.alpha, 1, 0.01);
+
         if (tow.type === 2) {
           // The player is trying to use the special bullet
           // We make sure he drag it's icon over a tower
@@ -508,8 +640,12 @@ class Gameplay extends Phaser.Scene {
             ) &&
             pos.occupied === true
           ) {
-            pos.tower.mode = "super";
-            pos.tower.setScale(1.2, 1.2);
+            var cost = this.costByTowerType[tow.type];
+            if (this.resource >= cost) {
+              pos.tower.mode = "super";
+              this.addToResources(-cost);
+              pos.tower.setScale(1.2, 1.2);
+            }
           }
         } else {
           if (
@@ -526,20 +662,52 @@ class Gameplay extends Phaser.Scene {
             pos.occupied === false
           ) {
             pos.tower = this.spawnTower(pos.x, pos.y, tow.type, j);
+            this.animateScale(pos.tower, 0.1, 1, 0.15);
+            this.animateScale(pos.tower.base, 0.1, pos.tower.base.scale, 0.15);
+
+            this.addToResources(-this.costByTowerType[tow.type]);
             tow.x = tow.initX;
             tow.y = tow.initY;
+            this.animateScale(tow, 0.1, 1, 0.15);
+            this.animateScale(tow.base, 0.1, tow.base.scale, 0.15);
+
             pos.occupied = true;
             pos.alpha = 0;
           } else {
             setTimeout(() => {
               for (var i = 0; i < this.listAvailableTowerTypes.length; i++) {
                 var tow = this.listAvailableTowerTypes[i];
-                tow.x = tow.initX;
-                tow.y = tow.initY;
+                // tow.x = tow.initX;
+                // tow.y = tow.initY;
+                this.animateTravel(
+                  tow,
+                  tow.x,
+                  tow.y,
+                  tow.initX,
+                  tow.initY,
+                  0.01
+                );
               }
             }, 0);
           }
         }
+      }
+    }
+  }
+
+  // Score function
+  addToResources(pX) {
+    this.resourceTo += pX;
+    for (var i = 0; i < this.listAvailableTowerTypes.length; i++) {
+      var tt = this.listAvailableTowerTypes[i];
+      if (this.resourceTo < this.costByTowerType[tt.type]) {
+        this.animateAlpha(tt, tt.alpha, 0.3, 0.1);
+        this.animateScale(tt, tt.scale, 0.8, 0.15);
+        this.animateScale(tt.base, tt.base.scale, 1.1, 0.15);
+      } else {
+        this.animateAlpha(tt, tt.alpha, 1, 0.1);
+        this.animateScale(tt, tt.scale, 1, 0.15);
+        this.animateScale(tt.base, tt.base.scale, 1.3, 0.15);
       }
     }
   }
@@ -583,6 +751,16 @@ class Gameplay extends Phaser.Scene {
     this.input.on(Phaser.Input.Events.POINTER_UP, this.onPointerUp, this);
 
     this.startLevel(1);
+
+    // Score
+    this.resourceText = this.add.text(
+      150,
+      10,
+      "Ressources : " + this.resource,
+      {
+        fontSize: 18,
+      }
+    );
   }
 
   update(time) {
@@ -591,6 +769,24 @@ class Gameplay extends Phaser.Scene {
       this.updateTanks(dt);
       this.updateTowers(dt);
       this.updateBullets();
+      this.updateScaleAnimations();
+      this.updateTravelAnimations();
+      this.updateAphaAnimations();
+
+      if (this.resource > this.resourceTo) {
+        this.resource -= (this.resource - this.resourceTo) * 0.15;
+        if (Math.abs(this.resource - this.resourceTo) <= 0.1) {
+          this.resource = this.resourceTo;
+        }
+        this.resourceText.text = "Ressources : " + Math.floor(this.resource);
+      }
+      if (this.resource < this.resourceTo) {
+        this.resource += (this.resourceTo - this.resource) * 0.15;
+        if (Math.abs(this.resource - this.resourceTo) <= 0.1) {
+          this.resource = this.resourceTo;
+        }
+        this.resourceText.text = "Ressources : " + Math.floor(this.resource);
+      }
     }
   }
 }

@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "",
+    "activeFile": "home.tmx",
     "expandedProjectPaths": [
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
@@ -20,7 +20,7 @@
             "scale": 0.75,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 354.66666666666663,
+                "x": 355.33333333333337,
                 "y": 223.33333333333331
             }
         },
@@ -48,13 +48,15 @@
     "map.lastUsedFormat": "tmx",
     "map.width": 20,
     "openFiles": [
+        "level1.tmx",
+        "home.tmx"
     ],
     "project": "td.tiled-project",
     "recentFiles": [
+        "level1.tmx",
         "home.tmx",
         "towerDefense_tilesheet.tsx",
-        "UI.tsx",
-        "level1.tmx"
+        "UI.tsx"
     ],
     "tileset.embedInMap": false,
     "tileset.lastUsedFilter": "Tiled tileset files (*.tsx *.xml)",

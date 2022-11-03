@@ -4,27 +4,27 @@
 
 ### Liste des tâches
 
-A. MVP : 5 Pomodoro
+A. MVP : 5 Pomodoros
 
 - [x] Menu principal
 - [x] Selection de niveau
 - [x] Ecran de crédits
 - [x] Ecran de gameplay affichage de la map
 
-B. Gestion des tanks : 11 Pomodoro
+B. Gestion des tanks : 11 Pomodoros
 
 - [x] Spawn des tanks
 - [x] Chemin à parcourir
 - [x] Vagues des tanks
 - [x] Objectif des tanks
 
-C. Gestion des tours : 5 Pomodoro + 18
+C. Gestion des tours : 5 Pomodoros + 18
 
 - [x] Spawn des tours
 - [x] Etablissement des potentielles positions défensives
 - [x] Support du drag and drop
 
-D. Gestion des tirs : 14 Pomodoro
+D. Gestion des tirs : 14 Pomodoros
 
 - [x] Tanks sur tours
 - [x] Tours sur tanks
@@ -34,10 +34,10 @@ D. Gestion des tirs : 14 Pomodoro
 - [x] Tirs spécial (Reaction en chaine)
 - [x] Ajout de la condition d'activation du tir spécail
 
-E. Gestion du score
+E. Gestion du score: 5 Pomodoros + 10"
 
-- [] Gestion des points de ressources et de santé
-- [] Animations
+- [x] Gestion des points de ressources
+- [x] Animations
 - [] Condition de victoire
 
 F. Final

@@ -19,12 +19,12 @@ class Tower extends Phaser.GameObjects.Sprite {
     switch (pType) {
       case 0:
         this.setTexture("tilesheet", 249);
-        this.life = 10;
+        this.life = 2; //0;
         this.range = 100;
         break;
       case 1:
         this.setTexture("tilesheet", 250);
-        this.life = 10;
+        this.life = 50;
         this.range = 100;
         break;
     }
