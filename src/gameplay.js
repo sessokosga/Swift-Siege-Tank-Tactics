@@ -9,7 +9,7 @@ class Gameplay extends Phaser.Scene {
 
     /** Tanks configs */
     this.listTanks = [];
-    this.maxTank = [14, 8, 12];
+    this.maxTank = [4, 8, 12];
     this.maxWave = [2, 5, 8];
     this.currentWave = 1;
     this.tankDestroyed = 0;
@@ -19,7 +19,7 @@ class Gameplay extends Phaser.Scene {
     this.pathsX[0][1] = [1, 1, 8, 8, 16, 16, 19];
     this.pathsX[0][2] = [1, 3, 3, 7, 8, 15, 16, 17, 19];
     this.tankShootDelay = [800, 650, 500];
-    this.tankSpeed = [0.5, 2, 3];
+    this.tankSpeed = [0.5, 1, 2];
 
     this.pathsY = [];
     this.pathsY[0] = [];
@@ -28,7 +28,7 @@ class Gameplay extends Phaser.Scene {
 
     this.tankObjectiveX = [19];
     this.tankObjectiveY = [8];
-    this.tankSpawnDelay = 1000; //3000;
+    this.tankSpawnDelay = 3000;
 
     /**  Tower configs */
     this.listTowers = [];
@@ -149,6 +149,9 @@ class Gameplay extends Phaser.Scene {
         "tilesheet",
         this.towerSprites[i]
       );
+      tow.base = this.add.sprite(tow.x, tow.y, "tilesheet", 181);
+      tow.depth = 2;
+      tow.base.setScale(1.3, 1.3);
       tow.clicked = false;
       tow.type = i;
       tow.initX = tow.x;
@@ -224,7 +227,7 @@ class Gameplay extends Phaser.Scene {
 
       if (tower.isDestroyed) {
         this.listDefPositions[tower.posID].occupied = false;
-        this.listDefPositions[tower.posID].towerID = null;
+        this.listDefPositions[tower.posID].alpha = 1;
         this.listTowers.splice(t, 1);
       }
     }
@@ -475,6 +478,7 @@ class Gameplay extends Phaser.Scene {
       if (tow.clicked) {
         tow.x = pointer.x;
         tow.y = pointer.y;
+        tow.base.alpha = 0;
       }
     }
   }
@@ -487,6 +491,7 @@ class Gameplay extends Phaser.Scene {
       // console.log(tow.def);
       for (var j = 0; j < this.listDefPositions.length; j++) {
         var pos = this.listDefPositions[j];
+        tow.base.alpha = 1;
         if (tow.type === 2) {
           // The player is trying to use the special bullet
           // We make sure he drag it's icon over a tower
@@ -524,6 +529,7 @@ class Gameplay extends Phaser.Scene {
             tow.x = tow.initX;
             tow.y = tow.initY;
             pos.occupied = true;
+            pos.alpha = 0;
           } else {
             setTimeout(() => {
               for (var i = 0; i < this.listAvailableTowerTypes.length; i++) {
