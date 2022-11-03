@@ -11,6 +11,7 @@ class Tower extends Phaser.GameObjects.Sprite {
     this.type = pType;
     this.isDestroyed = false;
     this.timer = 0;
+    this.mode = "normal";
     scene.add.existing(this);
     switch (pType) {
       case 0:
@@ -22,16 +23,6 @@ class Tower extends Phaser.GameObjects.Sprite {
         this.setTexture("tilesheet", 250);
         this.life = 10;
         this.range = 80;
-        break;
-      case 2:
-        this.setTexture("tilesheet", 204);
-        this.life = 10;
-        this.range = 80;
-        break;
-      case 3:
-        this.setTexture("tilesheet", 205);
-        this.range = 80;
-        this.life = 10;
         break;
     }
     this.text = scene.add.text(pX - 14, pY + 20, this.life);

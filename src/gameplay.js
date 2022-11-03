@@ -44,8 +44,8 @@ class Gameplay extends Phaser.Scene {
 
     // Available towers
     this.listAvailableTowerTypes = [];
-    this.totalTowerType = 2;
-    this.towerSprites = [249, 250];
+    this.totalTowerType = 3;
+    this.towerSprites = [249, 250, 252];
   }
 
   /** Bullet functions */
@@ -96,7 +96,7 @@ class Gameplay extends Phaser.Scene {
             )
           ) {
             if (bullet.type === 4) {
-              var timeToDestroy = 200;
+              var timeToDestroy = 150;
               for (var k = t - 1; k >= 0; k--) {
                 /**@type Tank */
                 var ta = this.listTanks[k];
@@ -104,7 +104,7 @@ class Gameplay extends Phaser.Scene {
                 ta.timerToDie = timeToDestroy;
                 timeToDestroy += 100;
               }
-              timeToDestroy = 200;
+              timeToDestroy = 150;
               for (var k = t + 1; k < this.listTanks.length; k++) {
                 var ta = this.listTanks[k];
                 ta.timerToDieIsEnabled = true;
@@ -137,6 +137,7 @@ class Gameplay extends Phaser.Scene {
     var tow = new Tower(this, pX, pY, pType);
     tow.posID = pPosID;
     this.listTowers.push(tow);
+    return tow;
   }
   showAvailableTowerTypes() {
     var x = 200;
@@ -160,6 +161,7 @@ class Gameplay extends Phaser.Scene {
   ShowDefPosition(pX, pY) {
     var pos = this.add.sprite(pX, pY, "tilesheet", 110);
     pos.occupied = false;
+    pos.tower = null;
     this.listDefPositions.push(pos);
   }
 
@@ -194,31 +196,27 @@ class Gameplay extends Phaser.Scene {
           var vy = 10 * Math.sin(angle);
           var ang = angle * (180 / Math.PI);
           tower.angle = ang + 90;
-          tower.timer = this.towerShootDelay[tower.type] * 9000000;
-          switch (tower.type) {
-            case 0:
-              this.shoot(
-                tower.x + 15 * Math.cos(angle),
-                tower.y + 15 * Math.sin(angle),
-                vx,
-                vy,
-                ang + 90,
-                4,
-                "tank"
-              );
-              break;
-            case 1:
-              this.shoot(
-                tower.x + 15 * Math.cos(angle),
-                tower.y + 15 * Math.sin(angle),
-                vx,
-                vy,
-                ang + 90,
-                3,
-                "tank"
-              );
-              break;
+          tower.timer = this.towerShootDelay[tower.type];
+          var bulletType = 0;
+          if (tower.type == 0) {
+            bulletType = 2;
+          } else if (tower.type == 1) {
+            bulletType = 3;
           }
+          if (tower.mode === "super") {
+            tower.mode = "normal";
+            tower.setScale(1, 1);
+            bulletType = 4;
+          }
+          this.shoot(
+            tower.x + 15 * Math.cos(angle),
+            tower.y + 15 * Math.sin(angle),
+            vx,
+            vy,
+            ang + 90,
+            bulletType,
+            "tank"
+          );
         }
       } else {
         tower.angle = 0;
@@ -226,6 +224,7 @@ class Gameplay extends Phaser.Scene {
 
       if (tower.isDestroyed) {
         this.listDefPositions[tower.posID].occupied = false;
+        this.listDefPositions[tower.posID].towerID = null;
         this.listTowers.splice(t, 1);
       }
     }
@@ -488,31 +487,52 @@ class Gameplay extends Phaser.Scene {
       // console.log(tow.def);
       for (var j = 0; j < this.listDefPositions.length; j++) {
         var pos = this.listDefPositions[j];
-        if (
-          isOverlaping(
-            pos.x - config.tileSize / 2,
-            pos.y - config.tileSize / 2,
-            pos.width,
-            pos.height,
-            tow.x - config.tileSize / 2,
-            tow.y - config.tileSize / 2,
-            tow.width,
-            tow.height
-          ) &&
-          pos.occupied === false
-        ) {
-          this.spawnTower(pos.x, pos.y, tow.type, j);
-          tow.x = tow.initX;
-          tow.y = tow.initY;
-          pos.occupied = true;
+        if (tow.type === 2) {
+          // The player is trying to use the special bullet
+          // We make sure he drag it's icon over a tower
+          if (
+            isOverlaping(
+              pos.x - config.tileSize / 2,
+              pos.y - config.tileSize / 2,
+              pos.width,
+              pos.height,
+              tow.x - config.tileSize / 2,
+              tow.y - config.tileSize / 2,
+              tow.width,
+              tow.height
+            ) &&
+            pos.occupied === true
+          ) {
+            pos.tower.mode = "super";
+            pos.tower.setScale(1.2, 1.2);
+          }
         } else {
-          setTimeout(() => {
-            for (var i = 0; i < this.listAvailableTowerTypes.length; i++) {
-              var tow = this.listAvailableTowerTypes[i];
-              tow.x = tow.initX;
-              tow.y = tow.initY;
-            }
-          }, 0);
+          if (
+            isOverlaping(
+              pos.x - config.tileSize / 2,
+              pos.y - config.tileSize / 2,
+              pos.width,
+              pos.height,
+              tow.x - config.tileSize / 2,
+              tow.y - config.tileSize / 2,
+              tow.width,
+              tow.height
+            ) &&
+            pos.occupied === false
+          ) {
+            pos.tower = this.spawnTower(pos.x, pos.y, tow.type, j);
+            tow.x = tow.initX;
+            tow.y = tow.initY;
+            pos.occupied = true;
+          } else {
+            setTimeout(() => {
+              for (var i = 0; i < this.listAvailableTowerTypes.length; i++) {
+                var tow = this.listAvailableTowerTypes[i];
+                tow.x = tow.initX;
+                tow.y = tow.initY;
+              }
+            }, 0);
+          }
         }
       }
     }

@@ -26,14 +26,15 @@
         },
         "level1.tmx": {
             "scale": 1.049453125,
-            "selectedLayer": 0,
+            "selectedLayer": 4,
             "viewCenter": {
                 "x": 319.6903148961512,
-                "y": 191.52832576490727
+                "y": 166.2770788357031
             }
         },
         "level1.tmx#towerDefense_tilesheet": {
-            "scaleInDock": 1
+            "scaleInDock": 1,
+            "scaleInEditor": 1
         },
         "towerDefense_tilesheet.tsx": {
             "dynamicWrapping": false,
