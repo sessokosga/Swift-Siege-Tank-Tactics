@@ -59,7 +59,7 @@ class Gameplay extends Phaser.Scene {
     for (var b = this.listBullets.length - 1; b >= 0; b--) {
       /**@type Bullet */
       var bullet = this.listBullets[b];
-      if (bullet.target === "tower") {
+      if (bullet.targetType === "tower") {
         for (var t = 0; t < this.listTowers.length; t++) {
           /**@type Tower */
           var tower = this.listTowers[t];
@@ -79,7 +79,7 @@ class Gameplay extends Phaser.Scene {
             tower.hurt(1);
           }
         }
-      } else if (bullet.target === "tank") {
+      } else if (bullet.targetType === "tank") {
         for (var t = 0; t < this.listTanks.length; t++) {
           /**@typ Tank */
           var tank = this.listTanks[t];
@@ -280,7 +280,7 @@ class Gameplay extends Phaser.Scene {
 
       // Shoot at the nearest tower found
       if (targetX > 0 && targetY > 0) {
-        /*   if (tank.timer <= 0) {
+        if (tank.timer <= 0) {
           var angle = processAngle(tank.x, tank.y, targetX, targetY);
           var vx = 10 * Math.cos(angle);
           var vy = 10 * Math.sin(angle);
@@ -296,7 +296,7 @@ class Gameplay extends Phaser.Scene {
             0,
             "tower"
           );
-        } */
+        }
       } else {
         tank.turret.angle = tank.angle;
       }

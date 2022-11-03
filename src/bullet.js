@@ -16,7 +16,7 @@ class Bullet extends Phaser.GameObjects.Sprite {
     this.vx = pVx;
     this.vy = pVy;
     this.angle = pAngle;
-    this.target = pTarget;
+    this.targetType = pTarget;
     scene.add.existing(this);
     this.isDestroyed = false;
     switch (pType) {
@@ -42,7 +42,7 @@ class Bullet extends Phaser.GameObjects.Sprite {
   }
 
   delete() {
-    this.destroy();
+    this.play("explosion2");
     this.isDestroyed = true;
   }
 

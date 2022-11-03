@@ -110,7 +110,7 @@ class Home extends Phaser.Scene {
     this.anims.create({
       key: "explosion2",
       frames: this.anims.generateFrameNumbers("explosion2"),
-      frameRate: 20,
+      frameRate: 200,
       repeat: 0,
       hideOnComplete: true,
     });
