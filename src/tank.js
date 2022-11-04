@@ -51,21 +51,23 @@ class Tank extends Phaser.GameObjects.Sprite {
   }
 
   delete() {
-    if (this.reachedObjective === false)
-      this.scene.addToResources(this.scene.resourceMap[this.type]);
-    switch (this.type) {
-      case 0:
-        this.play("explosion3");
-        break;
-      case 1:
-        this.play("explosion1");
-        break;
-    }
-
     this.turret.destroy();
     this.text.destroy();
     this.circle.destroy();
     this.isDestroyed = true;
+    if (this.reachedObjective === false) {
+      this.scene.addToResources(this.scene.resourceMap[this.type]);
+      switch (this.type) {
+        case 0:
+          this.play("explosion3");
+          break;
+        case 1:
+          this.play("explosion1");
+          break;
+      }
+    } else {
+      this.destroy();
+    }
   }
 
   hurt(pX) {

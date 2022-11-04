@@ -34,12 +34,12 @@ D. Gestion des tirs : 14 Pomodoros
 - [x] Tirs spécial (Reaction en chaine)
 - [x] Ajout de la condition d'activation du tir spécail
 
-E. Gestion du score: 7 Pomodoros + 10"
+E. Gestion du score: 10 Pomodoros + 10"
 
 - [x] Gestion des points de ressources
 - [x] Gestion des points de santé
 - [x] Animations
-- [] Condition de victoire
+- [x] Condition de victoire
 
 F. Final
 

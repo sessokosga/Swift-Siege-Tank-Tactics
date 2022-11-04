@@ -5,13 +5,13 @@ class Gameplay extends Phaser.Scene {
     this.nearBy = 4;
 
     // Resources
-    this.resource = 20000;
-    this.resourceTo = 20000;
+    this.resource = 2000;
+    this.resourceTo = 2000;
     this.resourceMap = [200, 250]; // 20 pts for level 1 tanks, 25 for level 2
 
     // Health
-    this.health = 2000;
-    this.healthTo = 2000;
+    this.health = 200;
+    this.healthTo = 200;
     this.healthConstOnTankObjectiveReached = 300;
     this.healthCostOnTowerDestroyed = 200;
 
@@ -30,7 +30,7 @@ class Gameplay extends Phaser.Scene {
     this.pathsX[0][1] = [1, 1, 8, 8, 16, 16, 19];
     this.pathsX[0][2] = [1, 3, 3, 7, 8, 15, 16, 17, 19];
     this.tankShootDelay = [800, 650, 500];
-    this.tankSpeed = [0.5, 1, 2];
+    this.tankSpeed = [2, 1, 2];
 
     this.pathsY = [];
     this.pathsY[0] = [];
@@ -39,7 +39,7 @@ class Gameplay extends Phaser.Scene {
 
     this.tankObjectiveX = [19];
     this.tankObjectiveY = [8];
-    this.tankSpawnDelay = 3000;
+    this.tankSpawnDelay = 1500;
 
     /**  Tower configs */
     this.listTowers = [];
@@ -388,11 +388,13 @@ class Gameplay extends Phaser.Scene {
 
   /** Tank functions */
   spawnTank(pX, pY, pType) {
-    var tank = new Tank(this, pX, pY, pType);
-    this.animateScale(tank, 0.1, 1.1, 0.1);
-    this.animateScale(tank.turret, 0.1, 1.1, 0.1);
-    this.listTanks.push(tank);
-    this.tankspawned++;
+    if (this.levelFailed === false) {
+      var tank = new Tank(this, pX, pY, pType);
+      this.animateScale(tank, 0.1, 1.1, 0.1);
+      this.animateScale(tank.turret, 0.1, 1.1, 0.1);
+      this.listTanks.push(tank);
+      this.tankspawned++;
+    }
   }
 
   startNextWave() {
@@ -406,11 +408,11 @@ class Gameplay extends Phaser.Scene {
           config.tileSize / 2,
         1
       );
-      // if (this.listTanks.length <= 1)
-      // console.log("Wave ", this.currentWave, " started");
+      if (this.listTanks.length <= 1)
+        console.log("Wave ", this.currentWave, " started");
     } else {
       clearInterval(this.spawnTimerID);
-      // console.log("Wave ", this.currentWave, " ended");
+      console.log("Wave ", this.currentWave, " ended");
     }
   }
 
@@ -507,31 +509,8 @@ class Gameplay extends Phaser.Scene {
         ) {
           //console.log("Objective reached");
           tank.reachedObjective = true;
+          tank.delete();
           this.costHealth(this.healthConstOnTankObjectiveReached);
-          // console.log(
-          //   "Destroyed ",
-          //   this.tankDestroyed,
-          //   " Max tanks ",
-          //   this.maxTank[this.currentLevel - 1]
-          // );
-        }
-
-        // Check if the current wave have ended
-        if (this.tankDestroyed === this.maxTank[this.currentLevel - 1]) {
-          //console.log("Checking possibility to start next wave");
-          // Start the next wave
-          if (this.currentWave < this.maxWave[this.currentLevel - 1]) {
-            this.currentWave++;
-            //console.log("Preparing to start wave ", this.currentWave);
-            setTimeout(() => {
-              this.tankspawned = 0;
-              this.tankDestroyed = 0;
-              this.spawnTimerID = setInterval(
-                () => this.startNextWave(),
-                this.tankSpawnDelay
-              );
-            }, 1000);
-          }
         }
       }
       tank.update();
@@ -544,6 +523,38 @@ class Gameplay extends Phaser.Scene {
         // Remove destroyed tanks from the tank list
         this.listTanks.splice(i, 1);
         this.tankDestroyed++;
+        console.log(
+          "Destroyed ",
+          this.tankDestroyed,
+          " Max tanks ",
+          this.maxTank[this.currentLevel - 1]
+        );
+
+        // Check if the current wave have ended
+        if (this.tankDestroyed === this.maxTank[this.currentLevel - 1]) {
+          console.log("Checking possibility to start next wave");
+          // Start the next wave
+          if (this.currentWave < this.maxWave[this.currentLevel - 1]) {
+            this.currentWave++;
+            console.log("Preparing to start wave ", this.currentWave);
+            setTimeout(() => {
+              this.tankspawned = 0;
+              this.tankDestroyed = 0;
+              this.spawnTimerID = setInterval(
+                () => this.startNextWave(),
+                this.tankSpawnDelay
+              );
+            }, 1000);
+          } else {
+            console.log("All waves are done");
+            if (this.health > 0) {
+              setTimeout(() => {
+                this.levelVictory = true;
+                this.showGameStatus();
+              }, 1000);
+            }
+          }
+        }
       }
     }
   }
@@ -553,6 +564,7 @@ class Gameplay extends Phaser.Scene {
   startLevel(pLevel) {
     this.clearLevelSelection();
     this.levelFailed = false;
+    this.levelVictory = false;
 
     if (pLevel === 1) {
       this.currentLevel = 1;
@@ -583,6 +595,16 @@ class Gameplay extends Phaser.Scene {
   }
 
   clearLevelSelection() {
+    this.titleSelection.visible = false;
+    this.level1Btn.visible = false;
+    this.level1Btn.text.visible = false;
+    this.level2Btn.visible = false;
+    this.level2Btn.text.visible = false;
+    this.level3Btn.visible = false;
+    this.level3Btn.text.visible = false;
+  }
+
+  showLevelSelection() {
     this.titleSelection.visible = false;
     this.level1Btn.visible = false;
     this.level1Btn.text.visible = false;
@@ -727,8 +749,6 @@ class Gameplay extends Phaser.Scene {
                 i++
               ) {
                 var tow = this.listAvailableTowerTypes[i];
-                // tow.x = tow.initX;
-                // tow.y = tow.initY;
                 this.animateTravel(
                   tow,
                   tow.x,
@@ -778,12 +798,25 @@ class Gameplay extends Phaser.Scene {
   }
 
   // Game over function
-  showGameOver() {
+  showGameStatus() {
+    this.children.getAll().forEach((child) => {
+      if (child.visible === true)
+        this.animateAlpha(child, child.alpha, 0.5, 0.05);
+    });
     for (var i = 0; i < this.listAvailableTowerTypes.length; i++) {
       var tt = this.listAvailableTowerTypes[i];
       this.animateAlpha(tt, tt.alpha, 0.3, 0.1);
       this.animateScale(tt, tt.scale, 0.8, 0.15);
       this.animateScale(tt.base, tt.base.scale, 1.1, 0.15);
+    }
+
+    if (this.levelFailed) {
+      this.levelFailedText.visible = true;
+      this.animateAlpha(this.levelFailedText, 0.6, 1, 0.05);
+    }
+    if (this.levelVictory) {
+      this.levelVictoryText.visible = true;
+      this.animateAlpha(this.levelVictoryText, 0.6, 1, 0.05);
     }
   }
 
@@ -838,18 +871,36 @@ class Gameplay extends Phaser.Scene {
     );
 
     // Health
-    this.healthText = this.add.text(400, 10, "Health : " + this.health, {
+    this.healthText = this.add.text(400, 10, "Santé : " + this.health, {
       fontSize: 18,
     });
+
+    // Level status
+    this.levelFailedText = this.add.text(0, 100, "Niveau Perdu", {
+      fontSize: 32,
+      fontStyle: "bold",
+    });
+    this.levelFailedText.x = (config.width - this.levelFailedText.width) / 2;
+    this.levelFailedText.visible = false;
+
+    this.levelVictoryText = this.add.text(100, 100, "Niveau Réussi", {
+      fontSize: 32,
+      fontStyle: "bold",
+    });
+    this.levelVictoryText.x = (config.width - this.levelVictoryText.width) / 2;
+    this.levelVictoryText.visible = false;
   }
 
   update(time) {
     var dt = getDeltaTime(time);
 
     if (this.gameStarted) {
-      this.updateTanks(dt);
-      this.updateTowers(dt);
-      this.updateBullets();
+      if (this.levelFailed === false) {
+        this.updateTanks(dt);
+        this.updateTowers(dt);
+        this.updateBullets();
+      }
+
       this.updateScaleAnimations();
       this.updateTravelAnimations();
       this.updateAphaAnimations();
@@ -876,15 +927,17 @@ class Gameplay extends Phaser.Scene {
         if (Math.abs(this.health - this.healthTo) <= 0.1) {
           this.health = this.healthTo;
         }
-        this.healthText.text = "Health : " + Math.floor(this.health);
+        this.healthText.text = "Santé : " + Math.floor(this.health);
       }
-      if (this.health <= 0) {
-        this.levelFailed = true;
+      if (this.health <= 0 && this.levelFailed === false) {
+        setTimeout(() => {
+          this.levelFailed = true;
+          this.showGameStatus();
+        }, 500);
       }
     }
     if (this.levelFailed) {
       console.log("Game Over");
-      this.showGameOver();
     }
   }
 }
