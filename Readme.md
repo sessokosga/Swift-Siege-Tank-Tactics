@@ -37,6 +37,7 @@ D. Gestion des tirs : 14 Pomodoros
 E. Gestion du score: 5 Pomodoros + 10"
 
 - [x] Gestion des points de ressources
+- [x] Gestion des points de santé
 - [x] Animations
 - [] Condition de victoire
 

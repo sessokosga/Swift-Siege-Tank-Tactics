@@ -33,6 +33,7 @@ class Tower extends Phaser.GameObjects.Sprite {
   }
 
   delete() {
+    this.scene.costHealth(this.scene.healthCostOnTowerDestroyed);
     switch (this.type) {
       case 0:
         this.play("explosion3");

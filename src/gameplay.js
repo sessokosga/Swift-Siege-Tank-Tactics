@@ -4,11 +4,16 @@ class Gameplay extends Phaser.Scene {
     this.gameStarted = false;
     this.nearBy = 4;
 
-    // Score
+    // Resources
     this.resource = 2000;
     this.resourceTo = 2000;
     this.resourceMap = [200, 250]; // 20 pts for level 1 tanks, 25 for level 2
-    this.comboRatio = 1.2; // 1.2 * nomber of tanks destroyed in a raw * 20 or 25
+
+    // Health
+    this.health = 2000;
+    this.healthTo = 2000;
+    this.healthConstOnTankObjectiveReached = 300;
+    this.healthCostOnTowerDestroyed = 200;
 
     /** Bullet configs */
     this.listBullets = [];
@@ -63,7 +68,6 @@ class Gameplay extends Phaser.Scene {
   /** Animation functions */
   animateScale(obj, scaleFrom, scaleTo, speed) {
     if (scaleFrom !== scaleTo) {
-      console.log(scaleFrom, scaleTo);
       obj.isScaling = true;
       obj.scale = scaleFrom;
       obj.scaleTo = scaleTo;
@@ -479,6 +483,7 @@ class Gameplay extends Phaser.Scene {
         ) {
           //console.log("Objective reached");
           tank.reachedObjective = true;
+          this.costHealth(this.healthConstOnTankObjectiveReached);
           // console.log(
           //   "Destroyed ",
           //   this.tankDestroyed,
@@ -695,7 +700,7 @@ class Gameplay extends Phaser.Scene {
     }
   }
 
-  // Score function
+  // Resources function
   addToResources(pX) {
     this.resourceTo += pX;
     for (var i = 0; i < this.listAvailableTowerTypes.length; i++) {
@@ -710,6 +715,11 @@ class Gameplay extends Phaser.Scene {
         this.animateScale(tt.base, tt.base.scale, 1.3, 0.15);
       }
     }
+  }
+
+  // Health functions
+  costHealth(pX) {
+    this.healthTo -= pX;
   }
 
   create() {
@@ -752,15 +762,20 @@ class Gameplay extends Phaser.Scene {
 
     this.startLevel(1);
 
-    // Score
+    // Resources
     this.resourceText = this.add.text(
-      150,
+      140,
       10,
       "Ressources : " + this.resource,
       {
         fontSize: 18,
       }
     );
+
+    // Health
+    this.healthText = this.add.text(400, 10, "Health : " + this.health, {
+      fontSize: 18,
+    });
   }
 
   update(time) {
@@ -773,6 +788,7 @@ class Gameplay extends Phaser.Scene {
       this.updateTravelAnimations();
       this.updateAphaAnimations();
 
+      // Animate Resources value modification
       if (this.resource > this.resourceTo) {
         this.resource -= (this.resource - this.resourceTo) * 0.15;
         if (Math.abs(this.resource - this.resourceTo) <= 0.1) {
@@ -786,6 +802,15 @@ class Gameplay extends Phaser.Scene {
           this.resource = this.resourceTo;
         }
         this.resourceText.text = "Ressources : " + Math.floor(this.resource);
+      }
+
+      // Animate Health value modification
+      if (this.health > this.healthTo) {
+        this.health -= (this.health - this.healthTo) * 0.15;
+        if (Math.abs(this.health - this.healthTo) <= 0.1) {
+          this.health = this.healthTo;
+        }
+        this.healthText.text = "Health : " + Math.floor(this.health);
       }
     }
   }
