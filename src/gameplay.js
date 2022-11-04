@@ -5,8 +5,8 @@ class Gameplay extends Phaser.Scene {
     this.nearBy = 4;
 
     // Resources
-    this.resource = 2000;
-    this.resourceTo = 2000;
+    this.resource = 20000;
+    this.resourceTo = 20000;
     this.resourceMap = [200, 250]; // 20 pts for level 1 tanks, 25 for level 2
 
     // Health
@@ -285,6 +285,13 @@ class Gameplay extends Phaser.Scene {
       tow.initX = tow.x;
       tow.initY = tow.y;
       tow.setInteractive();
+
+      if (tow.type === this.totalTowerType - 1) {
+        tow.alpha = 0.3;
+        tow.scale = 0.8;
+        tow.base.scale = 1.1;
+      }
+
       this.listAvailableTowerTypes.push(tow);
     }
   }
@@ -336,7 +343,14 @@ class Gameplay extends Phaser.Scene {
           }
           if (tower.mode === "super") {
             tower.mode = "normal";
-            tower.setScale(1, 1);
+            this.animateScale(tower, tower.scale, tower.scale - 0.2, 0.15);
+            this.animateScale(
+              tower.base,
+              tower.base.scale,
+              tower.base.scale - 0.2,
+              0.15
+            );
+
             bulletType = 4;
           }
           this.shoot(
@@ -358,6 +372,16 @@ class Gameplay extends Phaser.Scene {
         pos.occupied = false;
         this.animateAlpha(pos, pos.alpha, 1, 0.04);
         this.listTowers.splice(t, 1);
+        if (this.listTowers.length <= 0) {
+          for (var i = 0; i < this.listAvailableTowerTypes.length; i++) {
+            var tt = this.listAvailableTowerTypes[i];
+            if (tt.type === this.totalTowerType - 1) {
+              this.animateAlpha(tt, tt.alpha, 0.3, 0.1);
+              this.animateScale(tt, tt.scale, 0.8, 0.15);
+              this.animateScale(tt.base, tt.base.scale, 1.1, 0.15);
+            }
+          }
+        }
       }
     }
   }
@@ -528,6 +552,7 @@ class Gameplay extends Phaser.Scene {
 
   startLevel(pLevel) {
     this.clearLevelSelection();
+    this.levelFailed = false;
 
     if (pLevel === 1) {
       this.currentLevel = 1;
@@ -597,7 +622,7 @@ class Gameplay extends Phaser.Scene {
           tow.width,
           tow.height
         ) &&
-        this.resourceTo >= this.costByTowerType[tow.type]
+        tow.alpha === 1
       ) {
         tow.clicked = true;
       }
@@ -629,7 +654,7 @@ class Gameplay extends Phaser.Scene {
         this.animateAlpha(tow.base, tow.base.alpha, 1, 0.01);
         this.animateAlpha(tow.cost, tow.cost.alpha, 1, 0.01);
 
-        if (tow.type === 2) {
+        if (tow.type === this.totalTowerType - 1) {
           // The player is trying to use the special bullet
           // We make sure he drag it's icon over a tower
           if (
@@ -649,7 +674,23 @@ class Gameplay extends Phaser.Scene {
             if (this.resource >= cost) {
               pos.tower.mode = "super";
               this.addToResources(-cost);
-              pos.tower.setScale(1.2, 1.2);
+              this.animateScale(
+                pos.tower,
+                pos.tower.scale - 0.2,
+                pos.tower.scale + 0.2,
+                0.15
+              );
+              this.animateScale(
+                pos.tower.base,
+                pos.tower.base.scale - 0.2,
+                pos.tower.base.scale + 0.2,
+                0.15
+              );
+
+              tow.x = tow.initX;
+              tow.y = tow.initY;
+              this.animateScale(tow, 0.1, 1, 0.15);
+              this.animateScale(tow.base, 0.1, tow.base.scale, 0.15);
             }
           }
         } else {
@@ -680,7 +721,11 @@ class Gameplay extends Phaser.Scene {
             pos.alpha = 0;
           } else {
             setTimeout(() => {
-              for (var i = 0; i < this.listAvailableTowerTypes.length; i++) {
+              for (
+                var i = 0;
+                i < this.listAvailableTowerTypes.length - 1;
+                i++
+              ) {
                 var tow = this.listAvailableTowerTypes[i];
                 // tow.x = tow.initX;
                 // tow.y = tow.initY;
@@ -710,16 +755,36 @@ class Gameplay extends Phaser.Scene {
         this.animateScale(tt, tt.scale, 0.8, 0.15);
         this.animateScale(tt.base, tt.base.scale, 1.1, 0.15);
       } else {
-        this.animateAlpha(tt, tt.alpha, 1, 0.1);
-        this.animateScale(tt, tt.scale, 1, 0.15);
-        this.animateScale(tt.base, tt.base.scale, 1.3, 0.15);
+        if (tt.type === this.totalTowerType - 1) {
+          if (this.listTowers.length > 0) {
+            this.animateAlpha(tt, tt.alpha, 1, 0.1);
+            this.animateScale(tt, tt.scale, 1, 0.15);
+            this.animateScale(tt.base, tt.base.scale, 1.3, 0.15);
+          }
+        } else {
+          this.animateAlpha(tt, tt.alpha, 1, 0.1);
+          this.animateScale(tt, tt.scale, 1, 0.15);
+          this.animateScale(tt.base, tt.base.scale, 1.3, 0.15);
+        }
       }
     }
   }
 
   // Health functions
   costHealth(pX) {
-    this.healthTo -= pX;
+    if (this.levelFailed === false) {
+      this.healthTo -= pX;
+    }
+  }
+
+  // Game over function
+  showGameOver() {
+    for (var i = 0; i < this.listAvailableTowerTypes.length; i++) {
+      var tt = this.listAvailableTowerTypes[i];
+      this.animateAlpha(tt, tt.alpha, 0.3, 0.1);
+      this.animateScale(tt, tt.scale, 0.8, 0.15);
+      this.animateScale(tt.base, tt.base.scale, 1.1, 0.15);
+    }
   }
 
   create() {
@@ -780,6 +845,7 @@ class Gameplay extends Phaser.Scene {
 
   update(time) {
     var dt = getDeltaTime(time);
+
     if (this.gameStarted) {
       this.updateTanks(dt);
       this.updateTowers(dt);
@@ -812,6 +878,13 @@ class Gameplay extends Phaser.Scene {
         }
         this.healthText.text = "Health : " + Math.floor(this.health);
       }
+      if (this.health <= 0) {
+        this.levelFailed = true;
+      }
+    }
+    if (this.levelFailed) {
+      console.log("Game Over");
+      this.showGameOver();
     }
   }
 }
