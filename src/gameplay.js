@@ -5,14 +5,15 @@ class Gameplay extends Phaser.Scene {
     this.nearBy = 4;
     this.levelLocked = [false, false, false];
     this.maxLevel = 3;
+    this.unlockedLevel = 1;
     // Resources
     this.resource = 2000;
     this.resourceTo = 2000;
     this.resourceMap = [200, 250]; // 200 pts for level 1 tanks, 250 for level 2 tanks
 
     // Health
-    this.health = 200;
-    this.healthTo = 200;
+    this.health = 2000;
+    this.healthTo = 2000;
     this.healthConstOnTankObjectiveReached = 300;
     this.healthCostOnTowerDestroyed = 200;
 
@@ -21,8 +22,8 @@ class Gameplay extends Phaser.Scene {
 
     /** Tanks configs */
     this.listTanks = [];
-    this.maxTank = [1, 2, 1]; //[4, 8, 12];
-    this.maxWave = [1, 2, 1]; //[2, 5, 8];
+    this.maxTank = [2, 2, 2]; //[4, 8, 12];
+    this.maxWave = [2, 2, 2]; //[2, 5, 8];
     this.currentWave = 1;
     this.tankDestroyed = 0;
     this.tankspawned = 0;
@@ -53,16 +54,16 @@ class Gameplay extends Phaser.Scene {
 
     // Level 3
     this.pathsX[2] = [];
-    this.pathsX[2][1] = [1, 1, 8, 8, 16, 16, 19];
-    this.pathsX[2][2] = [1, 3, 3, 7, 8, 15, 16, 17, 19];
-
     this.pathsY[2] = [];
-    this.pathsY[2][1] = [0, 5, 5, 2, 2, 8, 8];
-    this.pathsY[2][2] = [11, 11, 9, 9, 10, 10, 9, 8, 8];
+    this.pathsX[2][1] = [0, 2, 3, 3, 12, 12, 13, 19];
+    this.pathsY[2][1] = [6, 6, 5, 2, 2, 5, 6, 6];
+
+    this.pathsX[2][2] = [0, 2, 3, 3, 12, 12, 13, 19];
+    this.pathsY[2][2] = [6, 6, 7, 10, 10, 7, 6, 6];
 
     // Tank objective per level
     this.tankObjectiveX = [19, 19, 19];
-    this.tankObjectiveY = [8, 7, 8];
+    this.tankObjectiveY = [8, 7, 6];
     this.tankSpawnDelay = 1500;
 
     /**  Tower configs */
@@ -79,8 +80,8 @@ class Gameplay extends Phaser.Scene {
     this.defPositionsX[1] = [1, 1, 5, 5, 12, 12, 17, 17];
     this.defPositionsY[1] = [5, 8, 5, 8, 5, 9, 5, 9];
     // Level 3
-    this.defPositionsX[2] = [1, 3, 4, 7, 10, 14, 14, 18, 18];
-    this.defPositionsY[2] = [7, 2, 7, 7, 4, 4, 8, 6, 10];
+    this.defPositionsX[2] = [5, 5, 10, 10];
+    this.defPositionsY[2] = [4, 8, 4, 8];
 
     this.listDefPositions = [];
 
@@ -597,8 +598,8 @@ class Gameplay extends Phaser.Scene {
     this.clearLevelSelection();
     this.resource = 2000;
     this.resourceTo = 2000;
-    this.health = 200;
-    this.healthTo = 200;
+    this.health = 2000;
+    this.healthTo = 2000;
 
     this.resourceText.text = "Ressources : " + Math.floor(this.resource);
     this.healthText.text = "Santé : " + Math.floor(this.health);
@@ -652,7 +653,8 @@ class Gameplay extends Phaser.Scene {
   clearLevelSelection() {
     this.children.getAll().forEach((child) => {
       child.visible = true;
-      child.alpha = 1;
+      if (child.visible === true)
+        this.animateAlpha(child, child.alpha, 1, 0.01);
     });
 
     this.titleSelection.visible = false;
@@ -1031,9 +1033,9 @@ class Gameplay extends Phaser.Scene {
 
     setTimeout(() => {
       if (this.levelVictory) {
-        this.currentLevel++;
-        if (this.currentLevel <= this.maxLevel) {
-          this.levelLocked[this.currentLevel - 1] = false;
+        this.unlockedLevel++;
+        if (this.unlockedLevel <= this.maxLevel) {
+          this.levelLocked[this.unlockedLevel - 1] = false;
         }
       }
       this.showLevelSelection();
@@ -1122,7 +1124,7 @@ class Gameplay extends Phaser.Scene {
     this.input.on("pointerout", this.onPointerOut, this);
 
     // this.showLevelSelection();
-    this.startLevel(2);
+    this.startLevel(3);
   }
 
   update(time) {

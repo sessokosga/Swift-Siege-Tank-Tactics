@@ -2,6 +2,16 @@
 
 ## Thème : Explosion en chaine
 
+Détruis tous les tanks ou survi à leur passage
+
+Tu perd des points de santé quant :
+
+- Tu perd une tours
+- Un tank arrive à l'autre bout de l'écran
+
+Tu gagne des point de ressources quand tu détruis un tank.
+Avec ces points tu installe de nouvelles tours pour faire face aux ennemis.
+
 ### Liste des tâches
 
 A. MVP : 5 Pomodoros
@@ -41,7 +51,7 @@ E. Gestion du score: 10 Pomodoros + 10"
 - [x] Animations
 - [x] Condition de victoire
 
-F. Final : 7 Pomodoros
+F. Final : 9 Pomodoros
 
 - [x] Étendre à plusieurs niveaux
 - [] Polish
