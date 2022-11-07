@@ -3,7 +3,8 @@ class Gameplay extends Phaser.Scene {
     super("gameplay");
     this.gameStarted = false;
     this.nearBy = 4;
-
+    this.levelLocked = [false, false, false];
+    this.maxLevel = 3;
     // Resources
     this.resource = 2000;
     this.resourceTo = 2000;
@@ -20,25 +21,47 @@ class Gameplay extends Phaser.Scene {
 
     /** Tanks configs */
     this.listTanks = [];
-    this.maxTank = [4, 8, 12];
-    this.maxWave = [2, 5, 8];
+    this.maxTank = [10, 1, 1]; //[4, 8, 12];
+    this.maxWave = [1, 1, 1]; //[2, 5, 8];
     this.currentWave = 1;
     this.tankDestroyed = 0;
     this.tankspawned = 0;
-    this.pathsX = [];
-    this.pathsX[0] = [];
-    this.pathsX[0][1] = [1, 1, 8, 8, 16, 16, 19];
-    this.pathsX[0][2] = [1, 3, 3, 7, 8, 15, 16, 17, 19];
     this.tankShootDelay = [800, 650, 500];
     this.tankSpeed = [2, 1, 2];
 
+    // Paths setup
+    this.pathsX = [];
     this.pathsY = [];
+    // Level 1
+    this.pathsX[0] = [];
+    this.pathsX[0][1] = [1, 1, 8, 8, 16, 16, 19];
+    this.pathsX[0][2] = [1, 3, 3, 7, 8, 15, 16, 17, 19];
+
     this.pathsY[0] = [];
     this.pathsY[0][1] = [0, 5, 5, 2, 2, 8, 8];
     this.pathsY[0][2] = [11, 11, 9, 9, 10, 10, 9, 8, 8];
 
-    this.tankObjectiveX = [19];
-    this.tankObjectiveY = [8];
+    // Level 2
+    this.pathsX[1] = [];
+    this.pathsX[1][1] = [1, 1, 8, 8, 16, 16, 19];
+    this.pathsX[1][2] = [1, 3, 3, 7, 8, 15, 16, 17, 19];
+
+    this.pathsY[1] = [];
+    this.pathsY[1][1] = [0, 5, 5, 2, 2, 8, 8];
+    this.pathsY[1][2] = [11, 11, 9, 9, 10, 10, 9, 8, 8];
+
+    // Level 3
+    this.pathsX[2] = [];
+    this.pathsX[2][1] = [1, 1, 8, 8, 16, 16, 19];
+    this.pathsX[2][2] = [1, 3, 3, 7, 8, 15, 16, 17, 19];
+
+    this.pathsY[2] = [];
+    this.pathsY[2][1] = [0, 5, 5, 2, 2, 8, 8];
+    this.pathsY[2][2] = [11, 11, 9, 9, 10, 10, 9, 8, 8];
+
+    // Tank objective per level
+    this.tankObjectiveX = [19, 19, 19];
+    this.tankObjectiveY = [8, 8, 8];
     this.tankSpawnDelay = 1500;
 
     /**  Tower configs */
@@ -47,9 +70,16 @@ class Gameplay extends Phaser.Scene {
 
     // Defensive positions
     this.defPositionsX = [];
-    this.defPositionsX[0] = [1, 3, 4, 7, 10, 14, 14, 18, 18];
     this.defPositionsY = [];
+    // Level 1
+    this.defPositionsX[0] = [1, 3, 4, 7, 10, 14, 14, 18, 18];
     this.defPositionsY[0] = [7, 2, 7, 7, 4, 4, 8, 6, 10];
+    // Level 2
+    this.defPositionsX[1] = [1, 3, 4, 7, 10, 14, 14, 18, 18];
+    this.defPositionsY[1] = [7, 2, 7, 7, 4, 4, 8, 6, 10];
+    // Level 3
+    this.defPositionsX[2] = [1, 3, 4, 7, 10, 14, 14, 18, 18];
+    this.defPositionsY[2] = [7, 2, 7, 7, 4, 4, 8, 6, 10];
 
     this.listDefPositions = [];
 
@@ -547,7 +577,7 @@ class Gameplay extends Phaser.Scene {
             }, 1000);
           } else {
             console.log("All waves are done");
-            if (this.health > 0) {
+            if (this.healthTo > 0) {
               setTimeout(() => {
                 this.levelVictory = true;
                 this.showGameStatus();
@@ -563,38 +593,62 @@ class Gameplay extends Phaser.Scene {
 
   startLevel(pLevel) {
     this.clearLevelSelection();
+    this.resource = 2000;
+    this.resourceTo = 2000;
+    this.health = 200;
+    this.healthTo = 200;
+
+    this.levelFailedText.visible = false;
+    this.levelVictoryText.visible = false;
+
     this.levelFailed = false;
     this.levelVictory = false;
 
-    if (pLevel === 1) {
-      this.currentLevel = 1;
-      this.map = this.add.image(0, 0, "level1");
+    // Reset tanks
+    this.listTanks = [];
+    this.tankspawned = 0;
+    this.tankDestroyed = 0;
+    this.currentWave = 1;
+
+    // Reset towers
+    this.listDefPositions = [];
+    this.listTowers = [];
+    this.listAvailableTowerTypes = [];
+
+    this.currentLevel = pLevel;
+    this.gameStarted = true;
+
+    // Reset map
+    console.log(this.map);
+    if (this.map === undefined) {
+      this.map = this.add.image(0, 0, "level" + pLevel);
       this.map.setOrigin(0, 0);
-      this.gameStarted = true;
-
-      // Init tanks
-      this.listTanks = [];
-      this.tankspawned = 0;
-      this.tankDestroyed = 0;
-      this.spawnTimerID = setInterval(() => {
-        this.startNextWave();
-      }, this.tankSpawnDelay);
-
-      // Init towers
-      for (var i = 0; i < this.defPositionsX[pLevel - 1].length; i++) {
-        var x =
-          this.defPositionsX[pLevel - 1][i] * config.tileSize +
-          config.tileSize / 2;
-        var y =
-          this.defPositionsY[pLevel - 1][i] * config.tileSize +
-          config.tileSize / 2;
-        this.ShowDefPosition(x, y);
-      }
-      this.showAvailableTowerTypes();
+    } else {
+      this.map.setTexture("level" + pLevel);
     }
+    console.log(this.map);
+
+    this.spawnTimerID = setInterval(() => {
+      this.startNextWave();
+    }, this.tankSpawnDelay);
+
+    // Init towers
+    for (var i = 0; i < this.defPositionsX[pLevel - 1].length; i++) {
+      var x =
+        this.defPositionsX[pLevel - 1][i] * config.tileSize +
+        config.tileSize / 2;
+      var y =
+        this.defPositionsY[pLevel - 1][i] * config.tileSize +
+        config.tileSize / 2;
+      this.ShowDefPosition(x, y);
+    }
+    this.showAvailableTowerTypes();
   }
 
   clearLevelSelection() {
+    this.children.getAll().forEach((child) => {
+      child.visible = true;
+    });
     this.titleSelection.visible = false;
     this.level1Btn.visible = false;
     this.level1Btn.text.visible = false;
@@ -602,19 +656,65 @@ class Gameplay extends Phaser.Scene {
     this.level2Btn.text.visible = false;
     this.level3Btn.visible = false;
     this.level3Btn.text.visible = false;
+    this.backBtn.text.visible = false;
+    this.backBtn.visible = false;
   }
 
   showLevelSelection() {
-    this.titleSelection.visible = false;
-    this.level1Btn.visible = false;
-    this.level1Btn.text.visible = false;
-    this.level2Btn.visible = false;
-    this.level2Btn.text.visible = false;
-    this.level3Btn.visible = false;
-    this.level3Btn.text.visible = false;
+    this.children.getAll().forEach((child) => {
+      child.visible = false;
+    });
+
+    if (this.levelLocked[1]) {
+      this.level2Btn.alpha = 0.5;
+      this.level2Btn.text.alpha = 0.5;
+    } else {
+      if (this.level2Btn.alpha < 1) {
+        this.animateAlpha(this.level2Btn, this.level2Btn.alpha - 0.2, 1, 0.05);
+        this.animateAlpha(
+          this.level2Btn.text,
+          this.level2Btn.alpha - 0.2,
+          1,
+          0.05
+        );
+      }
+    }
+
+    if (this.levelLocked[2]) {
+      this.level3Btn.alpha = 0.5;
+      this.level3Btn.text.alpha = 0.5;
+    } else {
+      if (this.level3Btn.alpha < 1) {
+        this.animateAlpha(this.level3Btn, this.level3Btn.alpha - 0.2, 1, 0.05);
+        this.animateAlpha(
+          this.level3Btn.text,
+          this.level3Btn.alpha - 0.2,
+          1,
+          0.05
+        );
+      }
+    }
+
+    this.titleSelection.visible = true;
+    this.level1Btn.visible = true;
+    this.level1Btn.text.visible = true;
+    this.level2Btn.visible = true;
+    this.level2Btn.text.visible = true;
+    this.level3Btn.visible = true;
+    this.level3Btn.text.visible = true;
+    this.backBtn.text.visible = true;
+    this.backBtn.visible = true;
+  }
+
+  /** Handle events */
+  onClick(pointer, gameObject) {
+    if (gameObject === this.backBtn) {
+      this.scene.start("home");
+    }
   }
 
   onPointerDown(pointer, gameObject) {
+    // Handle click on level selection button
     if (
       isOverlaping(
         pointer.x,
@@ -628,6 +728,36 @@ class Gameplay extends Phaser.Scene {
       )
     ) {
       this.startLevel(1);
+    }
+
+    if (
+      isOverlaping(
+        pointer.x,
+        pointer.y,
+        1,
+        1,
+        this.level2Btn.x,
+        this.level2Btn.y,
+        this.level2Btn.width,
+        this.level2Btn.height
+      )
+    ) {
+      this.startLevel(2);
+    }
+
+    if (
+      isOverlaping(
+        pointer.x,
+        pointer.y,
+        1,
+        1,
+        this.level3Btn.x,
+        this.level3Btn.y,
+        this.level3Btn.width,
+        this.level3Btn.height
+      )
+    ) {
+      this.startLevel(3);
     }
 
     // Collision with tower icons selection
@@ -818,6 +948,29 @@ class Gameplay extends Phaser.Scene {
       this.levelVictoryText.visible = true;
       this.animateAlpha(this.levelVictoryText, 0.6, 1, 0.05);
     }
+
+    setTimeout(() => {
+      this.children.getAll().forEach((child) => {
+        if (child.visible === true)
+          this.animateAlpha(child, child.alpha + 0.2, 0, 0.01);
+      });
+    }, 1500);
+
+    setTimeout(() => {
+      if (this.levelVictory) {
+        this.currentLevel++;
+        if (this.currentLevel <= this.maxLevel) {
+          this.levelLocked[this.currentLevel - 1] = false;
+        }
+
+        console.log(this.levelLocked[1], this.levelLocked[2]);
+      }
+      this.showLevelSelection();
+      this.children.getAll().forEach((child) => {
+        if (child.visible === true && child.alpha === 1)
+          this.animateAlpha(child, 0.6, 1, 0.05);
+      });
+    }, 2500);
   }
 
   create() {
@@ -858,8 +1011,6 @@ class Gameplay extends Phaser.Scene {
     this.input.on(Phaser.Input.Events.POINTER_MOVE, this.onPointerMove, this);
     this.input.on(Phaser.Input.Events.POINTER_UP, this.onPointerUp, this);
 
-    this.startLevel(1);
-
     // Resources
     this.resourceText = this.add.text(
       140,
@@ -869,11 +1020,13 @@ class Gameplay extends Phaser.Scene {
         fontSize: 18,
       }
     );
+    this.resourceText.depth = 2;
 
     // Health
     this.healthText = this.add.text(400, 10, "Santé : " + this.health, {
       fontSize: 18,
     });
+    this.healthText.depth = 2;
 
     // Level status
     this.levelFailedText = this.add.text(0, 100, "Niveau Perdu", {
@@ -881,14 +1034,20 @@ class Gameplay extends Phaser.Scene {
       fontStyle: "bold",
     });
     this.levelFailedText.x = (config.width - this.levelFailedText.width) / 2;
-    this.levelFailedText.visible = false;
+    this.levelFailedText.depth = 2;
 
     this.levelVictoryText = this.add.text(100, 100, "Niveau Réussi", {
       fontSize: 32,
       fontStyle: "bold",
     });
     this.levelVictoryText.x = (config.width - this.levelVictoryText.width) / 2;
-    this.levelVictoryText.visible = false;
+    this.levelVictoryText.depth = 2;
+
+    // Back button
+    this.backBtn = addButton(this, 32, 11 * 32, "Retour", 18, "button02", 0.7);
+    this.input.on("gameobjectdown", this.onClick, this);
+
+    this.showLevelSelection();
   }
 
   update(time) {
@@ -929,7 +1088,7 @@ class Gameplay extends Phaser.Scene {
         }
         this.healthText.text = "Santé : " + Math.floor(this.health);
       }
-      if (this.health <= 0 && this.levelFailed === false) {
+      if (this.healthTo <= 0 && this.levelFailed === false) {
         setTimeout(() => {
           this.levelFailed = true;
           this.showGameStatus();

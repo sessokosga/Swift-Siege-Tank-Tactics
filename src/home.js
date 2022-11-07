@@ -29,6 +29,8 @@ class Home extends Phaser.Scene {
     this.load.image("button02", "assets/images/ui/green_button02.png");
     this.load.image("button00", "assets/images/ui/green_button00.png");
     this.load.image("level1", "assets/images/map/level1.png");
+    this.load.image("level2", "assets/images/map/level2.png");
+    this.load.image("level3", "assets/images/map/level3.png");
   }
 
   onClick(pointer, gameObject) {
@@ -75,7 +77,7 @@ class Home extends Phaser.Scene {
   }
   create() {
     startTime = getTime();
-    this.scene.start("gameplay");
+    // this.scene.start("gameplay");
     this.add.text(0, 20, "Gamecodeur Gamejam #37", {
       fontSize: 35,
       fixedWidth: config.width,
@@ -83,7 +85,6 @@ class Home extends Phaser.Scene {
     });
 
     this.startBtn = addButton(this, 7 * 32, 7 * 32, "Jouer", 25, "button02");
-
     this.creditsBtn = addButton(
       this,
       7 * 32,

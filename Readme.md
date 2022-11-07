@@ -41,8 +41,7 @@ E. Gestion du score: 10 Pomodoros + 10"
 - [x] Animations
 - [x] Condition de victoire
 
-F. Final
+F. Final : 4 Pomodoros
 
-- [] Mettre en pause, reprendre le jeu
-- [] Étendre à plusieurs niveaux
+- [x] Étendre à plusieurs niveaux
 - [] Polish

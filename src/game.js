@@ -11,15 +11,18 @@ var startTime = 0;
 
 var game = new Phaser.Game(config);
 
-function addButton(pScene, pX, pY, pText, pTextSize, pTexture) {
+function addButton(pScene, pX, pY, pText, pTextSize, pTexture, pScale = 1) {
   var btn = pScene.add.image(pX, pY, pTexture);
-
+  btn.scale = pScale;
   btn.setOrigin(0, 0);
-  btn.text = pScene.add.text(btn.x, btn.y + 10, pText, {
+  btn.text = pScene.add.text(btn.x, btn.y, pText, {
     fontSize: pTextSize,
-    fixedWidth: btn.width,
+    fixedWidth: btn.width * pScale,
     align: "center",
   });
+
+  btn.text.y += (btn.height * pScale - btn.text.height) / 2;
+
   btn.setInteractive();
   return btn;
 }
