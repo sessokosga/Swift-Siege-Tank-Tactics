@@ -23,8 +23,8 @@ class Gameplay extends Phaser.Scene {
 
     /** Tanks configs */
     this.listTanks = [];
-    this.maxTank = [1, 6, 8];
-    this.maxWave = [1, 4, 5];
+    this.maxTank = [3, 6, 8];
+    this.maxWave = [3, 4, 5];
     this.currentWave = 1;
     this.tankDestroyed = 0;
     this.tankspawned = 0;
@@ -569,7 +569,7 @@ class Gameplay extends Phaser.Scene {
           this.costHealth(this.healthConstOnTankObjectiveReached);
         }
       }
-      tank.update();
+      tank.update(dt);
 
       if (tank.timerToDieIsEnabled) {
         tank.timerToDie -= dt;

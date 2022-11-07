@@ -69,13 +69,14 @@ class Tank extends Phaser.GameObjects.Sprite {
     }
   }
 
-  update() {
-    this.x += this.vx;
+  update(dt) {
+    dt = dt / 15;
+    this.x += this.vx * dt;
     this.turret.x = this.x;
     this.text.x = this.x;
     this.circle.x = this.x;
 
-    this.y += this.vy;
+    this.y += this.vy * dt;
     this.text.y = this.y;
     this.turret.y = this.y;
     this.circle.y = this.y;

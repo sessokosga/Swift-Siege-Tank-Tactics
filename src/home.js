@@ -88,8 +88,14 @@ class Home extends Phaser.Scene {
     startTime = getTime();
     this.sound.play("backgroundMusick", { loop: true, volume: 0.2 });
     // this.scene.start("gameplay");
-    this.add.text(0, 20, "Gamecodeur Gamejam #37", {
+    this.add.text(0, 40, "Tank Chain", {
       fontSize: 35,
+      fixedWidth: config.width,
+      align: "center",
+    });
+
+    this.add.text(0, 80, "Gamecodeur Gamejam #37", {
+      fontSize: 22,
       fixedWidth: config.width,
       align: "center",
     });

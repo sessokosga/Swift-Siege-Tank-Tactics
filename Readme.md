@@ -51,7 +51,7 @@ E. Gestion du score: 10 Pomodoros + 10"
 - [x] Animations
 - [x] Condition de victoire
 
-F. Final : 11 Pomodoros
+F. Final : 12 Pomodoros
 
 - [x] Étendre à plusieurs niveaux
 - [] Polish
