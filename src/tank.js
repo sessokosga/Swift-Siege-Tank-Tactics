@@ -32,7 +32,7 @@ class Tank extends Phaser.GameObjects.Sprite {
         break;
     }
     this.text = scene.add.text(pX, pY + 32, this.life);
-    this.circle = scene.add.circle(this.x, this.y, this.range, 0xffffff, 0.2);
+    // this.circle = scene.add.circle(this.x, this.y, this.range, 0xffffff, 0.2);
 
     this.turret.vx = 0;
     this.turret.vy = 0;
@@ -41,7 +41,7 @@ class Tank extends Phaser.GameObjects.Sprite {
   delete(pAnimate = true) {
     this.turret.destroy();
     this.text.destroy();
-    this.circle.destroy();
+    // this.circle.destroy();
     this.isDestroyed = true;
     if (this.reachedObjective === false && pAnimate === true) {
       this.scene.sfxExplosion1.play();
@@ -74,12 +74,12 @@ class Tank extends Phaser.GameObjects.Sprite {
     this.x += this.vx * dt;
     this.turret.x = this.x;
     this.text.x = this.x;
-    this.circle.x = this.x;
+    // this.circle.x = this.x;
 
     this.y += this.vy * dt;
     this.text.y = this.y;
     this.turret.y = this.y;
-    this.circle.y = this.y;
+    // this.circle.y = this.y;
 
     if (
       this.x > config.width + config.tileSize ||

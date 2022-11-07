@@ -19,7 +19,7 @@ class Tower extends Phaser.GameObjects.Sprite {
     switch (pType) {
       case 0:
         this.setTexture("tilesheet", 249);
-        this.life = 1; //0;
+        this.life = 10; //0;
         this.range = 90;
         break;
       case 1:
@@ -29,7 +29,7 @@ class Tower extends Phaser.GameObjects.Sprite {
         break;
     }
     this.text = scene.add.text(pX - 14, pY + 20, this.life);
-    this.circle = scene.add.circle(this.x, this.y, this.range, 0xffff00, 0.2);
+    // this.circle = scene.add.circle(this.x, this.y, this.range, 0xffff00, 0.2);
   }
 
   delete(pAnimate = true) {
@@ -47,7 +47,7 @@ class Tower extends Phaser.GameObjects.Sprite {
     }
     this.text.destroy();
     this.base.destroy();
-    this.circle.destroy();
+    // this.circle.destroy();
     this.isDestroyed = true;
   }
 
