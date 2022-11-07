@@ -3,13 +3,14 @@ class Gameplay extends Phaser.Scene {
     super("gameplay");
     this.gameStarted = false;
     this.nearBy = 4;
-    this.levelLocked = [false, false, false];
+    this.levelLocked = [false, true, true];
     this.maxLevel = 3;
     this.unlockedLevel = 1;
+
     // Resources
-    this.resource = 2000;
-    this.resourceTo = 2000;
-    this.resourceMap = [200, 250]; // 200 pts for level 1 tanks, 250 for level 2 tanks
+    this.resource = 5000;
+    this.resourceTo = 5000;
+    this.resourceMap = [300, 350]; // 200 pts for level 1 tanks, 250 for level 2 tanks
 
     // Health
     this.health = 2000;
@@ -22,13 +23,13 @@ class Gameplay extends Phaser.Scene {
 
     /** Tanks configs */
     this.listTanks = [];
-    this.maxTank = [2, 2, 2]; //[4, 8, 12];
-    this.maxWave = [2, 2, 2]; //[2, 5, 8];
+    this.maxTank = [3, 6, 8];
+    this.maxWave = [3, 4, 5];
     this.currentWave = 1;
     this.tankDestroyed = 0;
     this.tankspawned = 0;
     this.tankShootDelay = [800, 650, 500];
-    this.tankSpeed = [2, 1, 2];
+    this.tankSpeed = [1, 1.1, 1.2];
 
     // Paths setup
     this.pathsX = [];
@@ -37,10 +38,12 @@ class Gameplay extends Phaser.Scene {
     this.pathsX[0] = [];
     this.pathsX[0][1] = [1, 1, 8, 8, 16, 16, 19];
     this.pathsX[0][2] = [1, 3, 3, 7, 8, 15, 16, 17, 19];
+    this.pathsX[0][3] = [1, 3, 3, 7, 8, 15, 16, 17, 19];
 
     this.pathsY[0] = [];
     this.pathsY[0][1] = [0, 5, 5, 2, 2, 8, 8];
     this.pathsY[0][2] = [11, 11, 9, 9, 10, 10, 9, 8, 8];
+    this.pathsY[0][3] = [11, 11, 9, 9, 10, 10, 9, 8, 8];
 
     // Level 2
     this.pathsX[1] = [];
@@ -52,6 +55,12 @@ class Gameplay extends Phaser.Scene {
     this.pathsX[1][2] = [0, 7, 8, 10, 11, 11, 19];
     this.pathsY[1][2] = [10, 10, 9, 9, 8, 7, 7];
 
+    this.pathsX[1][3] = [0, 7, 8, 10, 11, 11, 19];
+    this.pathsY[1][3] = [10, 10, 9, 9, 8, 7, 7];
+
+    this.pathsX[1][4] = [0, 6, 7, 7, 10, 11, 11, 19];
+    this.pathsY[1][4] = [3, 3, 4, 5, 5, 6, 7, 7];
+
     // Level 3
     this.pathsX[2] = [];
     this.pathsY[2] = [];
@@ -60,6 +69,15 @@ class Gameplay extends Phaser.Scene {
 
     this.pathsX[2][2] = [0, 2, 3, 3, 12, 12, 13, 19];
     this.pathsY[2][2] = [6, 6, 7, 10, 10, 7, 6, 6];
+
+    this.pathsX[2][3] = [0, 2, 3, 3, 12, 12, 13, 19];
+    this.pathsY[2][3] = [6, 6, 5, 2, 2, 5, 6, 6];
+
+    this.pathsX[2][4] = [0, 2, 3, 3, 12, 12, 13, 19];
+    this.pathsY[2][4] = [6, 6, 7, 10, 10, 7, 6, 6];
+
+    this.pathsX[2][5] = [0, 2, 3, 3, 12, 12, 13, 19];
+    this.pathsY[2][5] = [6, 6, 7, 10, 10, 7, 6, 6];
 
     // Tank objective per level
     this.tankObjectiveX = [19, 19, 19];
@@ -430,6 +448,10 @@ class Gameplay extends Phaser.Scene {
   }
 
   startNextWave() {
+    var lev = 0;
+    if (this.currentLevel >= 2) {
+      lev = (this.currentWave + 1) % 2;
+    }
     if (this.tankspawned < this.maxTank[this.currentLevel - 1]) {
       this.spawnTank(
         this.pathsX[this.currentLevel - 1][this.currentWave][0] *
@@ -438,10 +460,11 @@ class Gameplay extends Phaser.Scene {
         this.pathsY[this.currentLevel - 1][this.currentWave][0] *
           config.tileSize +
           config.tileSize / 2,
-        1
+        lev
       );
-      // if (this.listTanks.length <= 1)
-      // console.log("Wave ", this.currentWave, " started");
+
+      this.waveText.text =
+        "Vague " + this.currentWave + "/" + this.maxWave[this.currentLevel - 1];
     } else {
       clearInterval(this.spawnTimerID);
       // console.log("Wave ", this.currentWave, " ended");
@@ -596,8 +619,8 @@ class Gameplay extends Phaser.Scene {
   startLevel(pLevel) {
     this.currentLevel = pLevel;
     this.clearLevelSelection();
-    this.resource = 2000;
-    this.resourceTo = 2000;
+    this.resource = 5000;
+    this.resourceTo = 5000;
     this.health = 2000;
     this.healthTo = 2000;
 
@@ -652,26 +675,101 @@ class Gameplay extends Phaser.Scene {
 
   clearLevelSelection() {
     this.children.getAll().forEach((child) => {
-      child.visible = true;
-      if (child.visible === true)
-        this.animateAlpha(child, child.alpha, 1, 0.01);
+      child.destroy();
+    });
+    // this.children.getAll().forEach((child) => {
+    //   child.visible = true;
+    //   if (child.visible === true)
+    //     this.animateAlpha(child, child.alpha, 1, 0.01);
+    // });
+
+    // Gameplay
+    this.map = this.add.sprite(0, 0, "level1");
+
+    // Resources
+    this.resourceText = this.add.text(
+      140,
+      10,
+      "Ressources : " + this.resource,
+      {
+        fontSize: 18,
+      }
+    );
+
+    // Health
+    this.healthText = this.add.text(400, 10, "Santé : " + this.health, {
+      fontSize: 18,
     });
 
-    this.titleSelection.visible = false;
-    this.level1Btn.visible = false;
-    this.level1Btn.text.visible = false;
-    this.level2Btn.visible = false;
-    this.level2Btn.text.visible = false;
-    this.level3Btn.visible = false;
-    this.level3Btn.text.visible = false;
-    this.backBtn.text.visible = false;
-    this.backBtn.visible = false;
+    // Level status
+    this.levelFailedText = this.add.text(0, 100, "Niveau Perdu", {
+      fontSize: 32,
+      fontStyle: "bold",
+    });
+    this.levelFailedText.x = (config.width - this.levelFailedText.width) / 2;
+    this.levelFailedText.depth = 2;
+
+    this.levelVictoryText = this.add.text(100, 100, "Niveau Réussi", {
+      fontSize: 32,
+      fontStyle: "bold",
+    });
+    this.levelVictoryText.x = (config.width - this.levelVictoryText.width) / 2;
+    this.levelVictoryText.depth = 2;
+
+    // Wave text
+    this.waveText = this.add.text(500, 12 * 32 + 10, "");
   }
 
   showLevelSelection() {
+    this.gameStarted = false;
     this.children.getAll().forEach((child) => {
-      child.visible = false;
+      child.destroy();
     });
+
+    // Level selection
+    this.titleSelection = this.add.text(0, 30, "Choix du niveau", {
+      fontSize: 30,
+      fixedWidth: config.width,
+      align: "center",
+    });
+
+    this.level1Btn = addButton(
+      this,
+      7 * config.tileSize,
+      3 * config.tileSize,
+      "Niveau 1",
+      25,
+      "button02"
+    );
+
+    this.level2Btn = addButton(
+      this,
+      7 * config.tileSize,
+      5 * config.tileSize + 10,
+      "Niveau 2",
+      25,
+      "button02"
+    );
+
+    this.level3Btn = addButton(
+      this,
+      7 * config.tileSize,
+      7 * config.tileSize + 20,
+      "Niveau 3",
+      25,
+      "button02"
+    );
+
+    this.input.on(Phaser.Input.Events.POINTER_DOWN, this.onPointerDown, this);
+    this.input.on(Phaser.Input.Events.POINTER_MOVE, this.onPointerMove, this);
+    this.input.on(Phaser.Input.Events.POINTER_UP, this.onPointerUp, this);
+
+    // Back button
+    this.backBtn = addButton(this, 32, 11 * 32, "Retour", 18, "button02", 0.7);
+    this.input.on("gameobjectdown", this.onClick, this);
+
+    this.input.on("pointerover", this.onPointerOver, this);
+    this.input.on("pointerout", this.onPointerOut, this);
 
     if (this.levelLocked[1]) {
       this.level2Btn.alpha = 0.5;
@@ -722,6 +820,9 @@ class Gameplay extends Phaser.Scene {
   }
 
   onPointerOver(pointer, gameObject) {
+    if (this.gameStarted) {
+      return;
+    }
     if (
       isOverlaping(
         pointer.x,
@@ -782,6 +883,9 @@ class Gameplay extends Phaser.Scene {
     }
   }
   onPointerOut(pointer, gameObject) {
+    if (this.gameStarted) {
+      return;
+    }
     this.backBtn.setTexture("button02");
     this.level1Btn.setTexture("button02");
     this.level2Btn.setTexture("button02");
@@ -1047,84 +1151,7 @@ class Gameplay extends Phaser.Scene {
   }
 
   create() {
-    this.titleSelection = this.add.text(0, 30, "Choix du niveau", {
-      fontSize: 30,
-      fixedWidth: config.width,
-      align: "center",
-    });
-
-    this.level1Btn = addButton(
-      this,
-      7 * config.tileSize,
-      3 * config.tileSize,
-      "Niveau 1",
-      25,
-      "button02"
-    );
-
-    this.level2Btn = addButton(
-      this,
-      7 * config.tileSize,
-      5 * config.tileSize + 10,
-      "Niveau 2",
-      25,
-      "button02"
-    );
-
-    this.level3Btn = addButton(
-      this,
-      7 * config.tileSize,
-      7 * config.tileSize + 20,
-      "Niveau 3",
-      25,
-      "button02"
-    );
-
-    this.input.on(Phaser.Input.Events.POINTER_DOWN, this.onPointerDown, this);
-    this.input.on(Phaser.Input.Events.POINTER_MOVE, this.onPointerMove, this);
-    this.input.on(Phaser.Input.Events.POINTER_UP, this.onPointerUp, this);
-
-    this.map = this.add.sprite(0, 0, "level1");
-
-    // Resources
-    this.resourceText = this.add.text(
-      140,
-      10,
-      "Ressources : " + this.resource,
-      {
-        fontSize: 18,
-      }
-    );
-
-    // Health
-    this.healthText = this.add.text(400, 10, "Santé : " + this.health, {
-      fontSize: 18,
-    });
-
-    // Level status
-    this.levelFailedText = this.add.text(0, 100, "Niveau Perdu", {
-      fontSize: 32,
-      fontStyle: "bold",
-    });
-    this.levelFailedText.x = (config.width - this.levelFailedText.width) / 2;
-    this.levelFailedText.depth = 2;
-
-    this.levelVictoryText = this.add.text(100, 100, "Niveau Réussi", {
-      fontSize: 32,
-      fontStyle: "bold",
-    });
-    this.levelVictoryText.x = (config.width - this.levelVictoryText.width) / 2;
-    this.levelVictoryText.depth = 2;
-
-    // Back button
-    this.backBtn = addButton(this, 32, 11 * 32, "Retour", 18, "button02", 0.7);
-    this.input.on("gameobjectdown", this.onClick, this);
-
-    this.input.on("pointerover", this.onPointerOver, this);
-    this.input.on("pointerout", this.onPointerOut, this);
-
-    // this.showLevelSelection();
-    this.startLevel(3);
+    this.showLevelSelection();
   }
 
   update(time) {
