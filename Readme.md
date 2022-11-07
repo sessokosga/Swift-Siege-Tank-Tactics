@@ -54,4 +54,4 @@ E. Gestion du score: 10 Pomodoros + 10"
 F. Final : 12 Pomodoros
 
 - [x] Étendre à plusieurs niveaux
-- [] Polish
+- [x] Polish
