@@ -32,15 +32,17 @@ class Tower extends Phaser.GameObjects.Sprite {
     this.circle = scene.add.circle(this.x, this.y, this.range, 0xffff00, 0.2);
   }
 
-  delete() {
-    this.scene.costHealth(this.scene.healthCostOnTowerDestroyed);
-    switch (this.type) {
-      case 0:
-        this.play("explosion3");
-        break;
-      case 1:
-        this.play("explosion1");
-        break;
+  delete(pAnimate) {
+    if (pAnimate) {
+      this.scene.costHealth(this.scene.healthCostOnTowerDestroyed);
+      switch (this.type) {
+        case 0:
+          this.play("explosion3");
+          break;
+        case 1:
+          this.play("explosion1");
+          break;
+      }
     }
     this.text.destroy();
     this.base.destroy();

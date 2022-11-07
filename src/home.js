@@ -77,7 +77,7 @@ class Home extends Phaser.Scene {
   }
   create() {
     startTime = getTime();
-    // this.scene.start("gameplay");
+    this.scene.start("gameplay");
     this.add.text(0, 20, "Gamecodeur Gamejam #37", {
       fontSize: 35,
       fixedWidth: config.width,
@@ -88,7 +88,7 @@ class Home extends Phaser.Scene {
     this.creditsBtn = addButton(
       this,
       7 * 32,
-      9 * 32 + 10,
+      9 * 32,
       "Crédits",
       25,
       "button02"

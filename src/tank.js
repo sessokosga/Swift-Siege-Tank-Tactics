@@ -50,12 +50,12 @@ class Tank extends Phaser.GameObjects.Sprite {
     this.turret.vy = 0;
   }
 
-  delete() {
+  delete(pAnimate) {
     this.turret.destroy();
     this.text.destroy();
     this.circle.destroy();
     this.isDestroyed = true;
-    if (this.reachedObjective === false) {
+    if (this.reachedObjective === false && pAnimate === true) {
       this.scene.addToResources(this.scene.resourceMap[this.type]);
       switch (this.type) {
         case 0:
