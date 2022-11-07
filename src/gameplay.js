@@ -23,8 +23,8 @@ class Gameplay extends Phaser.Scene {
 
     /** Tanks configs */
     this.listTanks = [];
-    this.maxTank = [3, 6, 8];
-    this.maxWave = [3, 4, 5];
+    this.maxTank = [1, 6, 8];
+    this.maxWave = [1, 4, 5];
     this.currentWave = 1;
     this.tankDestroyed = 0;
     this.tankspawned = 0;
@@ -216,6 +216,7 @@ class Gameplay extends Phaser.Scene {
   /** Bullet functions */
 
   shoot(pX, pY, pVx, pVy, pAngle, pType, pTarget) {
+    this.sfxShoot.play();
     var bullet = new Bullet(this, pX, pY, pVx, pVy, pAngle, pType, pTarget);
     this.listBullets.push(bullet);
   }
@@ -603,6 +604,10 @@ class Gameplay extends Phaser.Scene {
           } else {
             // console.log("All waves are done");
             if (this.healthTo > 0) {
+              this.sfxVictory.play();
+              setTimeout(() => {
+                this.sfxVictory.stop();
+              }, 5500);
               setTimeout(() => {
                 this.levelVictory = true;
                 this.showGameStatus();
@@ -677,11 +682,6 @@ class Gameplay extends Phaser.Scene {
     this.children.getAll().forEach((child) => {
       child.destroy();
     });
-    // this.children.getAll().forEach((child) => {
-    //   child.visible = true;
-    //   if (child.visible === true)
-    //     this.animateAlpha(child, child.alpha, 1, 0.01);
-    // });
 
     // Gameplay
     this.map = this.add.sprite(0, 0, "level1");
@@ -718,6 +718,12 @@ class Gameplay extends Phaser.Scene {
 
     // Wave text
     this.waveText = this.add.text(500, 12 * 32 + 10, "");
+
+    // SFX
+    this.sfxExplosion1 = this.sound.add("explosion1", { volume: 0.8 });
+    this.sfxExplosion2 = this.sound.add("explosion2", { volume: 0.6 });
+    this.sfxShoot = this.sound.add("shoot", { volume: 0.6 });
+    this.sfxVictory = this.sound.add("victory");
   }
 
   showLevelSelection() {
@@ -816,6 +822,7 @@ class Gameplay extends Phaser.Scene {
   onClick(pointer, gameObject) {
     if (gameObject === this.backBtn) {
       this.scene.start("home");
+      this.sound.play("click");
     }
   }
 
@@ -906,6 +913,7 @@ class Gameplay extends Phaser.Scene {
         this.level1Btn.height
       )
     ) {
+      this.sound.play("click");
       this.startLevel(1);
     }
 
@@ -919,8 +927,10 @@ class Gameplay extends Phaser.Scene {
         this.level2Btn.y,
         this.level2Btn.width,
         this.level2Btn.height
-      )
+      ) &&
+      this.levelLocked[1] == false
     ) {
+      this.sound.play("click");
       this.startLevel(2);
     }
 
@@ -934,8 +944,10 @@ class Gameplay extends Phaser.Scene {
         this.level3Btn.y,
         this.level3Btn.width,
         this.level3Btn.height
-      )
+      ) &&
+      this.levelLocked[2] == false
     ) {
+      this.sound.play("click");
       this.startLevel(3);
     }
 
@@ -1052,11 +1064,7 @@ class Gameplay extends Phaser.Scene {
             pos.alpha = 0;
           } else {
             setTimeout(() => {
-              for (
-                var i = 0;
-                i < this.listAvailableTowerTypes.length - 1;
-                i++
-              ) {
+              for (var i = 0; i < this.listAvailableTowerTypes.length; i++) {
                 var tow = this.listAvailableTowerTypes[i];
                 this.animateTravel(
                   tow,
@@ -1143,10 +1151,6 @@ class Gameplay extends Phaser.Scene {
         }
       }
       this.showLevelSelection();
-      this.children.getAll().forEach((child) => {
-        if (child.visible === true && child.alpha === 1)
-          this.animateAlpha(child, 0.6, 1, 0.05);
-      });
     }, 2500);
   }
 

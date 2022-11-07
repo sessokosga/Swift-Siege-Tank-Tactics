@@ -19,12 +19,12 @@ class Tower extends Phaser.GameObjects.Sprite {
     switch (pType) {
       case 0:
         this.setTexture("tilesheet", 249);
-        this.life = 15; //0;
+        this.life = 1; //0;
         this.range = 90;
         break;
       case 1:
         this.setTexture("tilesheet", 250);
-        this.life = 25;
+        this.life = 15;
         this.range = 120;
         break;
     }
@@ -34,6 +34,7 @@ class Tower extends Phaser.GameObjects.Sprite {
 
   delete(pAnimate = true) {
     if (pAnimate == true) {
+      this.scene.sfxExplosion2.play();
       this.scene.costHealth(this.scene.healthCostOnTowerDestroyed);
       switch (this.type) {
         case 0:

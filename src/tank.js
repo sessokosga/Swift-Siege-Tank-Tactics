@@ -44,6 +44,7 @@ class Tank extends Phaser.GameObjects.Sprite {
     this.circle.destroy();
     this.isDestroyed = true;
     if (this.reachedObjective === false && pAnimate === true) {
+      this.scene.sfxExplosion1.play();
       this.scene.addToResources(this.scene.resourceMap[this.type]);
       switch (this.type) {
         case 0:

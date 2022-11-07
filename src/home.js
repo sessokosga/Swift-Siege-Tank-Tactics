@@ -31,12 +31,21 @@ class Home extends Phaser.Scene {
     this.load.image("level1", "assets/images/map/level1.png");
     this.load.image("level2", "assets/images/map/level2.png");
     this.load.image("level3", "assets/images/map/level3.png");
+
+    this.load.audio("click", "assets/sfx/click2.ogg");
+    this.load.audio("backgroundMusick", "assets/music/Alien Invasion.mp3");
+    this.load.audio("explosion1", "assets/sfx/Explosion.wav");
+    this.load.audio("explosion2", "assets/sfx/ShipExplosion.wav");
+    this.load.audio("shoot", "assets/sfx/shoot.wav");
+    this.load.audio("victory", "assets/sfx/victory.wav");
   }
 
   onClick(pointer, gameObject) {
     if (gameObject === this.startBtn) {
+      this.sound.play("click");
       this.scene.start("gameplay");
     } else if (gameObject === this.creditsBtn) {
+      this.sound.play("click");
       this.scene.start("credits");
     }
   }
@@ -77,7 +86,8 @@ class Home extends Phaser.Scene {
   }
   create() {
     startTime = getTime();
-    this.scene.start("gameplay");
+    this.sound.play("backgroundMusick", { loop: true, volume: 0.2 });
+    // this.scene.start("gameplay");
     this.add.text(0, 20, "Gamecodeur Gamejam #37", {
       fontSize: 35,
       fixedWidth: config.width,
