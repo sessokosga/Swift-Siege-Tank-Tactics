@@ -3,7 +3,7 @@ class Gameplay extends Phaser.Scene {
     super("gameplay");
     this.gameStarted = false;
     this.nearBy = 4;
-    this.levelLocked = [false, false, false];
+    this.levelLocked = [false, true, true];
     this.maxLevel = 3;
     // Resources
     this.resource = 2000;
@@ -713,6 +713,73 @@ class Gameplay extends Phaser.Scene {
     }
   }
 
+  onPointerOver(pointer, gameObject) {
+    if (
+      isOverlaping(
+        pointer.x,
+        pointer.y,
+        1,
+        1,
+        this.backBtn.x,
+        this.backBtn.y,
+        this.backBtn.width,
+        this.backBtn.height
+      )
+    ) {
+      this.backBtn.setTexture("button00");
+    }
+    if (
+      isOverlaping(
+        pointer.x,
+        pointer.y,
+        1,
+        1,
+        this.level1Btn.x,
+        this.level1Btn.y,
+        this.level1Btn.width,
+        this.level1Btn.height
+      )
+    ) {
+      this.level1Btn.setTexture("button00");
+    }
+
+    if (
+      isOverlaping(
+        pointer.x,
+        pointer.y,
+        1,
+        1,
+        this.level2Btn.x,
+        this.level2Btn.y,
+        this.level2Btn.width,
+        this.level2Btn.height
+      )
+    ) {
+      this.level2Btn.setTexture("button00");
+    }
+
+    if (
+      isOverlaping(
+        pointer.x,
+        pointer.y,
+        1,
+        1,
+        this.level3Btn.x,
+        this.level3Btn.y,
+        this.level3Btn.width,
+        this.level3Btn.height
+      )
+    ) {
+      this.level3Btn.setTexture("button00");
+    }
+  }
+  onPointerOut(pointer, gameObject) {
+    this.backBtn.setTexture("button02");
+    this.level1Btn.setTexture("button02");
+    this.level2Btn.setTexture("button02");
+    this.level3Btn.setTexture("button02");
+  }
+
   onPointerDown(pointer, gameObject) {
     // Handle click on level selection button
     if (
@@ -974,8 +1041,8 @@ class Gameplay extends Phaser.Scene {
   }
 
   create() {
-    this.titleSelection = this.add.text(0, 20, "Level Selection", {
-      fontSize: 25,
+    this.titleSelection = this.add.text(0, 30, "Choix du niveau", {
+      fontSize: 30,
       fixedWidth: config.width,
       align: "center",
     });
@@ -1046,6 +1113,9 @@ class Gameplay extends Phaser.Scene {
     // Back button
     this.backBtn = addButton(this, 32, 11 * 32, "Retour", 18, "button02", 0.7);
     this.input.on("gameobjectdown", this.onClick, this);
+
+    this.input.on("pointerover", this.onPointerOver, this);
+    this.input.on("pointerout", this.onPointerOut, this);
 
     this.showLevelSelection();
   }

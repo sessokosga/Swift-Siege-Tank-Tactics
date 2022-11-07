@@ -88,7 +88,7 @@ class Home extends Phaser.Scene {
     this.creditsBtn = addButton(
       this,
       7 * 32,
-      9 * 32,
+      9 * 32 + 10,
       "Crédits",
       25,
       "button02"

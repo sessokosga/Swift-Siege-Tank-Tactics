@@ -11,7 +11,15 @@ var startTime = 0;
 
 var game = new Phaser.Game(config);
 
-function addButton(pScene, pX, pY, pText, pTextSize, pTexture, pScale = 1) {
+function addButton(
+  pScene,
+  pX,
+  pY,
+  pText,
+  pTextSize = 18,
+  pTexture,
+  pScale = 1
+) {
   var btn = pScene.add.image(pX, pY, pTexture);
   btn.scale = pScale;
   btn.setOrigin(0, 0);
