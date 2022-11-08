@@ -28,7 +28,7 @@ B. Gestion des tanks : 11 Pomodoros
 - [x] Vagues des tanks
 - [x] Objectif des tanks
 
-C. Gestion des tours : 5 Pomodoros + 18
+C. Gestion des tours : 5 Pomodoros + 18"
 
 - [x] Spawn des tours
 - [x] Etablissement des potentielles positions défensives
@@ -55,3 +55,10 @@ F. Final : 12 Pomodoros
 
 - [x] Étendre à plusieurs niveaux
 - [x] Polish
+
+Durée totale : 57 Pomodoros + 28" => 24h13"
+
+## Avis su Phaser 3 :
+
+Javascript me fait penser à Lua. Les deux ont des fonctionnalités qui me plaisent beaucoup. La déclaration des variables qui se fait très simplement ainsi la possibilité d'ajouter des propriétés à des variables à la volée.  
+Une difficulté que j'avais remarqué en faisant des jeux envanilla JS était le process long et fastidieux pour mettre en place le minimum requis pour faire des jeux. C'est là où Phaser est intervenu, il a rendu la programmation de jeux en JS fun à nouveau. J'apprécie vraiment beaucoup ce framework. Son fonctionnement est très simple à compendre et la prise en main est très rapide. Ce n'est que du bonheur de travaille avec.

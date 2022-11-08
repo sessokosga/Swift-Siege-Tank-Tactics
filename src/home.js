@@ -85,7 +85,7 @@ class Home extends Phaser.Scene {
   }
   create() {
     startTime = getTime();
-    this.add.text(0, 40, "Tank Chgitain", {
+    this.add.text(0, 40, "Tank Chain", {
       fontSize: 35,
       fixedWidth: config.width,
       align: "center",
