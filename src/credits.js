@@ -29,7 +29,6 @@ class Credits extends Phaser.Scene {
     this.input.on("gameobjectdown", this.onClick, this);
     var text =
       "Images : Kenney.nl" +
-      "\n\nMusique d'arrière plan : Raphaël Marcon" +
       "\n\nSFX : Gamecodeur Pack";
     this.add.text(0, 150, text, { fixedWidth: config.width, align: "center" });
   }
