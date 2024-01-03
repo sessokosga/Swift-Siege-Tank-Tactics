@@ -85,13 +85,13 @@ class Home extends Phaser.Scene {
   }
   create() {
     startTime = getTime();
-    this.add.text(0, 40, "Tank Chain", {
+    this.add.text(0, 40, "Swift Siege: Tank Tactics", {
       fontSize: 35,
       fixedWidth: config.width,
       align: "center",
     });
 
-    this.add.text(0, 80, "Gamecodeur Gamejam #37", {
+    this.add.text(0, 80, "Swift Siege: Tank Tactics", {
       fontSize: 22,
       fixedWidth: config.width,
       align: "center",
