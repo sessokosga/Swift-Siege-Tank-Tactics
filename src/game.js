@@ -5,6 +5,10 @@ var config = {
   pixelArt: true,
   scene: [Home, Gameplay, Credits],
   backgroundColor: "#000",
+  scale: {
+			mode: Phaser.Scale.FIT,
+			autoCenter: Phaser.Scale.CENTER_BOTH
+  }
 };
 
 var startTime = 0;
